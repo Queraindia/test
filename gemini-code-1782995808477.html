@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quera</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:ital,wght@0,700;0,900;1,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+    <style>
+        /* ... (Apna purana CSS yahi rakho, maine niche script fix ki hai) ... */
+        :root { --bg-deep: #0a0a0c; --bg-panel: #141417; --bg-glass: rgba(20, 20, 23, 0.7); --border-glass: rgba(255, 255, 255, 0.08); --text-main: #ffffff; --text-muted: #8a8a93; --accent: #00e5ff; --accent-glow: rgba(0, 229, 255, 0.4); --radius-lg: 24px; --radius-md: 16px; --radius-sm: 8px; --transition: all 0.2s ease-out; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-deep); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        .app-container { display: flex; flex: 1; height: calc(100vh - 100px); overflow: hidden; position: relative; }
+        .sidebar { width: 320px; background: var(--bg-panel); border-right: 1px solid var(--border-glass); display: flex; flex-direction: column; padding: 24px 20px; gap: 20px; }
+        .hidden { display: none !important; }
+        /* Baaki CSS wahi rakho jo tumhare paas hai */
+    </style>
+</head>
+<body>
+
+<script>
+    // FIX: Browser mein crash hone se bachane ke liye
+    let ipcRenderer, fs;
+    try {
+        ipcRenderer = require('electron').ipcRenderer;
+        fs = require('fs');
+    } catch (e) {
+        console.log("Running in Browser mode - File system features disabled.");
+    }
+
+    class HeavyEnginePlayer {
+        constructor() {
+            this.files = []; this.currentIndex = -1; this.isPlaying = false;
+            this.audioElement = new Audio();
+            this.audioElement.crossOrigin = "anonymous";
+            this.audioCtx = null;
+            this.initDOM();
+            this.bindEvents();
+        }
+
+        initDOM() {
+            this.dom = {
+                btnFiles: document.getElementById('btn-add-files'),
+                btnFolder: document.getElementById('btn-add-folder'),
+                fileInput: document.getElementById('file-input'),
+                folderInput: document.getElementById('folder-input'),
+                // ... (Baaki saare elements) ...
+                settingsPanel: document.getElementById('settings-panel'),
+                openSettings: document.getElementById('open-settings-btn'),
+                closeSettings: document.getElementById('close-settings-btn'),
+                playBtn: document.getElementById('btn-play'),
+                playIcon: document.getElementById('play-icon'),
+                // Add remaining elements here
+            };
+        }
+
+        bindEvents() {
+            // Settings Button Fix
+            if(this.dom.openSettings) this.dom.openSettings.addEventListener('click', () => this.dom.settingsPanel.classList.add('open'));
+            if(this.dom.closeSettings) this.dom.closeSettings.addEventListener('click', () => this.dom.settingsPanel.classList.remove('open'));
+            
+            this.dom.btnFiles.addEventListener('click', () => this.dom.fileInput.click());
+            // ... (Baaki events) ...
+
+            // IPC Listener with safety check
+            if (ipcRenderer) {
+                ipcRenderer.on('open-file', (event, filePath) => {
+                    this.addFileFromPath(filePath);
+                });
+            }
+        }
+
+        addFileFromPath(filePath) {
+            if (!fs) return; // Browser mein chale toh skip kar de
+            // ... (Tumhara addFileFromPath logic) ...
+        }
+
+        // ... (Baaki saare methods) ...
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { window.playerEngine = new HeavyEnginePlayer(); });
+</script>
+</body>
+</html>
