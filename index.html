@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5" />
+  <title>CMG Coaching Workspace</title>
+
+  <!-- Google Material Symbols & Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Firebase Modular SDK v12.16.0 -->
+  <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js",
+        "firebase/database": "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js"
+      }
+    }
+  </script>
+
+  <style>
+    /* ===== GOOGLE MATERIAL 3 DESIGN TOKENS ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      /* M3 Light Theme */
+      --md-sys-color-primary: #0b57d0;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #d3e3fd;
+      --md-sys-color-on-primary-container: #041e49;
+      --md-sys-color-secondary: #444746;
+      --md-sys-color-surface: #f3f6fc; /* Google Workspace Background */
+      --md-sys-color-surface-container: #ffffff;
+      --md-sys-color-surface-container-high: #e8eaed;
+      --md-sys-color-on-surface: #1f1f1f;
+      --md-sys-color-on-surface-variant: #444746;
+      --md-sys-color-outline: #747775;
+      --md-sys-color-outline-variant: #c4c7c5;
+      --md-sys-color-error: #b3261e;
+      --md-sys-color-success: #146c2e;
+      
+      /* Shapes & Elevations */
+      --md-sys-shape-corner-extra-large: 28px;
+      --md-sys-shape-corner-large: 16px;
+      --md-sys-shape-corner-medium: 12px;
+      --md-sys-shape-corner-full: 100px;
+      --md-sys-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.3), 0 1px 3px 1px rgba(0,0,0,0.15);
+      --md-sys-elevation-2: 0 1px 2px 0 rgba(0,0,0,0.3), 0 2px 6px 2px rgba(0,0,0,0.15);
+      --md-sys-elevation-3: 0 1px 3px 0 rgba(0,0,0,0.3), 0 4px 8px 3px rgba(0,0,0,0.15);
+      
+      /* Transitions */
+      --md-transition-standard: 0.25s cubic-bezier(0.2, 0, 0, 1);
+      --font-family: 'Inter', 'Google Sans', sans-serif;
+      --nav-width: 280px;
+      --header-height: 64px;
+      --bottom-nav-height: 80px;
+    }
+    
+    [data-theme="dark"] {
+      --md-sys-color-primary: #a8c7fa;
+      --md-sys-color-on-primary: #062e6f;
+      --md-sys-color-primary-container: #0842a0;
+      --md-sys-color-on-primary-container: #d3e3fd;
+      --md-sys-color-secondary: #c4c7c5;
+      --md-sys-color-surface: #131314;
+      --md-sys-color-surface-container: #1e1f20;
+      --md-sys-color-surface-container-high: #282a2c;
+      --md-sys-color-on-surface: #e3e3e3;
+      --md-sys-color-on-surface-variant: #c4c7c5;
+      --md-sys-color-outline: #8e918f;
+      --md-sys-color-outline-variant: #444746;
+      --md-sys-color-error: #f2b8b5;
+      --md-sys-color-success: #6dd58c;
+    }
+    
+    html, body {
+      font-family: var(--font-family);
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      height: 100%; overflow: hidden;
+      transition: background var(--md-transition-standard), color var(--md-transition-standard);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--md-sys-color-primary); text-decoration: none; font-weight: 500; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--md-sys-color-outline-variant); border-radius: 4px; }
+
+    /* ===== SPLASH ===== */
+    #splash {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: var(--md-sys-color-surface);
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #splash.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+    #splash-logo {
+      width: 110px; height: 110px; border-radius: 32px; object-fit: cover;
+      box-shadow: var(--md-sys-elevation-2);
+      animation: splashPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes splashPop {
+      0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    #splash h1 {
+      margin-top: 24px; font-size: 32px; font-weight: 500;
+      color: var(--md-sys-color-on-surface); font-family: 'Google Sans', sans-serif;
+    }
+    .splash-loader {
+      margin-top: 32px; width: 48px; height: 48px;
+      border: 4px solid var(--md-sys-color-primary-container);
+      border-top-color: var(--md-sys-color-primary);
+      border-radius: 50%;
+      animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    /* ===== LOGIN ===== */
+    #login-page {
+      position: fixed; inset: 0; z-index: 100;
+      display: none; align-items: center; justify-content: center;
+      background: var(--md-sys-color-surface); overflow: hidden;
+    }
+    #login-page.active { display: flex; }
+    
+    .login-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .login-bg .book {
+      position: absolute; font-size: 40px; opacity: 0.08;
+      animation: floatBook 20s infinite linear; color: var(--md-sys-color-primary);
+    }
+    @keyframes floatBook {
+      0% { transform: translate(0,0) rotate(0deg); }
+      25% { transform: translate(60px,-40px) rotate(4deg); }
+      50% { transform: translate(-20px,-80px) rotate(-2deg); }
+      75% { transform: translate(40px,-30px) rotate(6deg); }
+      100% { transform: translate(0,0) rotate(0deg); }
+    }
+
+    .login-card {
+      position: relative; z-index: 2;
+      width: 100%; max-width: 440px; padding: 48px 40px;
+      background: var(--md-sys-color-surface-container);
+      border-radius: var(--md-sys-shape-corner-extra-large);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      box-shadow: var(--md-sys-elevation-2);
+      margin: 16px;
+    }
+    .login-card .logo-wrap { text-align: center; margin-bottom: 32px; }
+    .login-card .logo-wrap img { width: 64px; height: 64px; border-radius: 16px; margin-bottom: 16px; }
+    .login-card .logo-wrap h2 { font-size: 26px; font-family: 'Google Sans', sans-serif; font-weight: 400; }
+    .login-card .logo-wrap span { color: var(--md-sys-color-on-surface-variant); font-size: 15px; margin-top: 8px; display: block; }
+    
+    .md-field { margin-bottom: 24px; position: relative; }
+    .md-field label {
+      display: block; font-size: 13px; font-weight: 500;
+      color: var(--md-sys-color-on-surface-variant); margin-bottom: 8px;
+    }
+    .md-field input, .md-field textarea, .md-field select {
+      width: 100%; padding: 14px 16px;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-medium);
+      font-size: 15px; font-family: var(--font-family);
+      background: var(--md-sys-color-surface-container); color: var(--md-sys-color-on-surface);
+      transition: border var(--md-transition-standard), box-shadow var(--md-transition-standard);
+      outline: none;
+    }
+    .md-field input:focus, .md-field textarea:focus, .md-field select:focus {
+      border-color: var(--md-sys-color-primary);
+      border-width: 2px; padding: 13px 15px; /* Offset border width */
+    }
+    .error-text { color: var(--md-sys-color-error); font-size: 12px; margin-top: 6px; display: none; }
+    .error-text.show { display: block; }
+
+    .btn-primary {
+      width: 100%; padding: 14px 24px; border: none;
+      border-radius: var(--md-sys-shape-corner-full);
+      background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
+      font-size: 15px; font-weight: 500; font-family: var(--font-family);
+      cursor: pointer; transition: all var(--md-transition-standard);
+      position: relative; overflow: hidden;
+    }
+    .btn-primary:hover {
+      box-shadow: var(--md-sys-elevation-1);
+      background: linear-gradient(0deg, rgba(255,255,255,0.08), rgba(255,255,255,0.08)), var(--md-sys-color-primary);
+    }
+    .btn-primary:active { transform: scale(0.98); box-shadow: none; }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* ===== APP SHELL ===== */
+    #app { display: none; height: 100vh; overflow: hidden; }
+    #app.active { display: flex; }
+    
+    .nav-drawer {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: var(--nav-width);
+      background: var(--md-sys-color-surface);
+      overflow-y: auto; z-index: 50;
+      transform: translateX(-100%);
+      transition: transform var(--md-transition-standard);
+      padding: 24px 12px;
+      display: flex; flex-direction: column;
+    }
+    .nav-drawer.open { transform: translateX(0); box-shadow: var(--md-sys-elevation-2); }
+    @media (min-width: 768px) {
+      .nav-drawer { transform: translateX(0); box-shadow: none; }
+    }
+    
+    /* Brand Header in Drawer */
+    .nav-drawer .brand {
+      display: flex; align-items: center; justify-content: space-between; 
+      padding: 0 8px 24px 16px; margin-bottom: 12px; width: 100%;
+    }
+    .nav-drawer .brand .brand-info {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .nav-drawer .brand img { width: 48px; height: 48px; border-radius: 12px; }
+    .nav-drawer .brand h3 { font-size: 20px; font-family: 'Google Sans', sans-serif; font-weight: 500; }
+    
+    /* 3 Lines Toggle Button inside Drawer (Visible on Mobile) */
+    .drawer-menu-btn {
+      display: none; background: none; border: none; font-size: 24px;
+      cursor: pointer; color: var(--md-sys-color-on-surface);
+      width: 44px; height: 44px; border-radius: 50%;
+      align-items: center; justify-content: center;
+      transition: background var(--md-transition-standard);
+    }
+    .drawer-menu-btn:hover { background: var(--md-sys-color-surface-container-high); }
+    @media (max-width: 767px) {
+      .drawer-menu-btn { display: flex; }
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 16px;
+      padding: 12px 16px; margin-bottom: 4px;
+      border-radius: var(--md-sys-shape-corner-full);
+      cursor: pointer;
+      color: var(--md-sys-color-on-surface-variant);
+      font-weight: 500; font-size: 14px;
+      transition: all var(--md-transition-standard);
+    }
+    .nav-item:hover { background: var(--md-sys-color-surface-container-high); }
+    .nav-item.active {
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+    }
+    .nav-item .mat-icon { font-size: 24px; font-variation-settings: 'FILL' 0; transition: font-variation-settings 0.2s; }
+    .nav-item.active .mat-icon { font-variation-settings: 'FILL' 1; color: var(--md-sys-color-primary); }
+    
+    .main-content {
+      flex: 1; display: flex; flex-direction: column;
+      height: 100vh; overflow: hidden;
+      background: var(--md-sys-color-surface);
+      transition: margin-left var(--md-transition-standard);
+    }
+    @media (min-width: 768px) {
+      .main-content { margin-left: var(--nav-width); background: var(--md-sys-color-surface-container); border-radius: 24px 0 0 24px; margin-top: 12px; height: calc(100vh - 12px); border: 1px solid var(--md-sys-color-outline-variant); }
+    }
+
+    .app-header {
+      height: var(--header-height); padding: 0 24px;
+      display: flex; align-items: center; gap: 16px;
+      background: transparent; flex-shrink: 0; margin-top: 8px;
+    }
+    .app-header .menu-btn {
+      background: none; border: none; font-size: 24px;
+      cursor: pointer; color: var(--md-sys-color-on-surface);
+      width: 48px; height: 48px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--md-transition-standard);
+    }
+    .app-header .menu-btn:hover { background: var(--md-sys-color-surface-container-high); }
+    .app-header .header-title { font-size: 22px; font-family: 'Google Sans', sans-serif; font-weight: 400; flex: 1; }
+    .app-header .avatar-btn {
+      width: 42px; height: 42px; border-radius: 50%; border: none;
+      background: var(--md-sys-color-primary-container); color: var(--md-sys-color-primary);
+      font-weight: 600; font-size: 16px; cursor: pointer; transition: transform var(--md-transition-standard);
+    }
+    .app-header .avatar-btn:hover { transform: scale(1.05); }
+
+    .page-content {
+      flex: 1; overflow-y: auto; padding: 24px;
+    }
+    .page-title-banner { margin-bottom: 28px; }
+    .page-title-banner h2 { font-size: 32px; font-family: 'Google Sans', sans-serif; font-weight: 400; color: var(--md-sys-color-on-surface); }
+    .page-title-banner p { color: var(--md-sys-color-on-surface-variant); font-size: 15px; margin-top: 6px; }
+
+    /* ===== M3 BOTTOM NAV ===== */
+    .bottom-nav {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--bottom-nav-height); background: var(--md-sys-color-surface-container);
+      z-index: 40; justify-content: space-around; align-items: center;
+      border-top: 1px solid var(--md-sys-color-outline-variant);
+    }
+    .bnav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      border: none; background: none; color: var(--md-sys-color-on-surface-variant);
+      font-size: 12px; font-weight: 500; cursor: pointer; padding: 8px 12px;
+      position: relative; overflow: hidden;
+    }
+    .bnav-item .icon-wrap {
+      width: 64px; height: 32px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .bnav-item.active { color: var(--md-sys-color-on-surface); font-weight: 600; }
+    .bnav-item.active .icon-wrap { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
+    .bnav-item.active .mat-icon { font-variation-settings: 'FILL' 1; }
+
+    /* ===== CARDS (Google Material 3) ===== */
+    .md-card {
+      background: var(--md-sys-color-surface-container);
+      border-radius: var(--md-sys-shape-corner-extra-large);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      padding: 24px; margin-bottom: 16px;
+      transition: box-shadow var(--md-transition-standard);
+    }
+    .md-card:hover { box-shadow: var(--md-sys-elevation-1); }
+    .md-card .card-title { font-size: 18px; font-family: 'Google Sans', sans-serif; font-weight: 500; margin-bottom: 8px; }
+    .md-card .card-sub { font-size: 14px; color: var(--md-sys-color-on-surface-variant); }
+    .md-card .card-meta { font-size: 13px; color: var(--md-sys-color-on-surface-variant); display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+    .md-card .card-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+    
+    .chip {
+      display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 8px;
+      font-size: 12px; font-weight: 600; font-family: 'Google Sans', sans-serif;
+      background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-surface-variant);
+      border: 1px solid var(--md-sys-color-outline-variant);
+    }
+    .chip.primary { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-primary); border: none; }
+    .chip.green { background: #e6f4ea; color: #1e7e34; border:none; }
+    .chip.orange { background: #fef7e0; color: #b45b0a; border:none; }
+    .chip.blue { background: #e8f0fe; color: #1a5bb5; border:none; }
+    [data-theme="dark"] .chip.green { background: #1e3a2a; color: #81c995; }
+    [data-theme="dark"] .chip.orange { background: #3a2e1e; color: #fdd663; }
+    [data-theme="dark"] .chip.blue { background: #1a2a4a; color: #8ab4f8; }
+    
+    .btn-sm {
+      padding: 8px 20px; border: 1px solid var(--md-sys-color-outline); border-radius: var(--md-sys-shape-corner-full);
+      font-size: 14px; font-weight: 500; font-family: var(--font-family);
+      cursor: pointer; background: transparent; color: var(--md-sys-color-primary);
+      transition: background var(--md-transition-standard);
+      position: relative; overflow: hidden;
+    }
+    .btn-sm:hover { background: var(--md-sys-color-primary-container); border-color: transparent; }
+    .btn-sm.primary { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); border: none; }
+    .btn-sm.primary:hover { background: linear-gradient(0deg, rgba(255,255,255,0.08), rgba(255,255,255,0.08)), var(--md-sys-color-primary); }
+    .btn-sm.danger { background: var(--md-sys-color-error); color: #fff; border: none; }
+    .btn-sm.outline { border: 1px solid var(--md-sys-color-primary); color: var(--md-sys-color-primary); }
+
+    .md-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .md-grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    
+    .stat-card { text-align: center; padding: 24px; border: none; background: var(--md-sys-color-primary-container); }
+    .stat-card .num { font-size: 40px; font-weight: 400; font-family: 'Google Sans', sans-serif; color: var(--md-sys-color-primary); }
+    .stat-card .label { font-size: 14px; font-weight: 500; color: var(--md-sys-color-on-primary-container); margin-top: 4px; }
+
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--md-sys-color-on-surface-variant); }
+    .empty-state .mat-icon { font-size: 56px; opacity: 0.5; margin-bottom: 16px; }
+    .empty-state h4 { font-size: 20px; font-family: 'Google Sans', sans-serif; font-weight: 500; color: var(--md-sys-color-on-surface); }
+
+    .avatar-circle {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 16px; color: #fff;
+      flex-shrink: 0; background: var(--md-sys-color-primary);
+    }
+    .avatar-circle.small { width: 36px; height: 36px; font-size: 14px; }
+    .avatar-circle.large { width: 80px; height: 80px; font-size: 28px; }
+
+    .edu-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--md-sys-color-primary-container); color: var(--md-sys-color-primary);
+      font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; letter-spacing: 0.5px;
+    }
+
+    /* DIALOG (M3) */
+    .dialog-overlay {
+      position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.45);
+      display: none; align-items: center; justify-content: center; padding: 24px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.28s cubic-bezier(0.2, 0, 0, 1);
+    }
+    .dialog-overlay.active {
+      display: flex; opacity: 1; pointer-events: auto;
+    }
+    .dialog-box {
+      background: var(--md-sys-color-surface-container); border-radius: 28px;
+      max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto;
+      padding: 32px; box-shadow: var(--md-sys-elevation-3);
+      opacity: 0; transform: translateY(16px) scale(0.98);
+      transition: opacity 0.28s cubic-bezier(0.2, 0, 0, 1), transform 0.28s cubic-bezier(0.2, 0, 0, 1);
+    }
+    .dialog-overlay.active .dialog-box {
+      opacity: 1; transform: translateY(0) scale(1);
+    }
+    .dialog-box .dialog-title { font-size: 24px; font-family: 'Google Sans', sans-serif; font-weight: 400; margin-bottom: 8px; }
+    .dialog-box .dialog-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 32px; flex-wrap: wrap; }
+
+    /* SNACKBAR */
+    .snackbar {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+      z-index: 300; background: #323232; color: #f1f3f4;
+      padding: 14px 24px; border-radius: 12px; font-size: 14px; font-weight: 400;
+      box-shadow: var(--md-sys-elevation-3); opacity: 0; transition: all 0.4s cubic-bezier(0.2,0,0,1);
+      display: flex; align-items: center; gap: 16px;
+    }
+    .snackbar.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* RIPPLE EFFECT */
+    .ripple { position: relative; overflow: hidden; }
+    .ripple-effect {
+      position: absolute; border-radius: 50%;
+      background: rgba(11, 87, 208, 0.15); /* Primary color low opacity */
+      transform: scale(0); animation: rippleAnim 0.6s linear; pointer-events: none;
+    }
+    [data-theme="dark"] .ripple-effect { background: rgba(168, 199, 250, 0.15); }
+    .btn-primary .ripple-effect { background: rgba(255, 255, 255, 0.3); }
+    @keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    
+    @media (max-width: 767px) {
+      .app-header { display: flex; margin-top:0; border-bottom:1px solid var(--md-sys-color-outline-variant); }
+      .bottom-nav { display: flex; }
+      .main-content { background: var(--md-sys-color-surface); margin-left: 0 !important; }
+      .page-content { padding: 16px 16px 100px; }
+      .md-card { padding: 20px; border-radius: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img id="splash-logo" src="https://i.ibb.co/RkfvxS4B/Chat-GPT-Image-Jul-18-2026-11-06-05-PM-1.jpg" alt="CMG Logo" />
+  <h1>CMG Coaching</h1>
+  <div style="color:var(--md-sys-color-on-surface-variant); font-size:15px; margin-top:8px;">Your Learning Workspace</div>
+  <div class="splash-loader"></div>
+</div>
+
+<!-- LOGIN -->
+<div id="login-page">
+  <div class="login-bg" id="loginBg"></div>
+  <div class="login-card">
+    <div class="logo-wrap">
+      <img src="https://i.ibb.co/RkfvxS4B/Chat-GPT-Image-Jul-18-2026-11-06-05-PM-1.jpg" alt="CMG" />
+      <h2>Sign in</h2>
+      <span>Use your CMG Account</span>
+    </div>
+    <div id="fbStatusBanner" style="display:none; color:var(--md-sys-color-error); font-size:13px; font-weight:500; margin-bottom:16px; text-align:center;"></div>
+    
+    <form id="loginForm" autocomplete="off">
+      <div class="md-field">
+        <label>Enrollment Number</label>
+        <input type="text" id="loginEnroll" placeholder="e.g. CMG2024001" required />
+      </div>
+      <div class="md-field">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter your password" required />
+      </div>
+      <button type="submit" class="btn-primary ripple" id="loginBtn">Sign In</button>
+      <div style="text-align:center; margin-top:24px; font-size:14px;">
+        <a id="switchToSignup" style="cursor:pointer; font-weight:600;">Create account</a>
+      </div>
+    </form>
+    
+    <form id="signupForm" style="display:none;" autocomplete="off">
+      <div class="md-field"><label>Full Name</label><input type="text" id="signupName" required /></div>
+      <div class="md-field"><label>Enrollment Number</label><input type="text" id="signupEnroll" required /></div>
+      <div class="md-field"><label>ARN (4-digit)</label><input type="text" id="signupArn" maxlength="4" required /></div>
+      <div class="md-field"><label>Password</label><input type="password" id="signupPassword" required /></div>
+      <div class="md-field"><label>Confirm Password</label><input type="password" id="signupConfirm" required /></div>
+      <button type="submit" class="btn-primary ripple" id="signupBtn">Create Account</button>
+      <div style="text-align:center; margin-top:24px; font-size:14px;">
+        <a id="switchToLogin" style="cursor:pointer; font-weight:600;">Sign in instead</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav class="nav-drawer" id="navDrawer">
+    <div class="brand">
+      <div class="brand-info">
+        <img src="https://i.ibb.co/RkfvxS4B/Chat-GPT-Image-Jul-18-2026-11-06-05-PM-1.jpg" alt="CMG" />
+        <div>
+          <h3>CMG Workspace</h3>
+          <span style="font-size:12px; color:var(--md-sys-color-on-surface-variant); font-weight:500;" id="navUserRole">Student</span>
+        </div>
+      </div>
+      <!-- ADDED THIS BUTTON: 3-line hamburger menu inside the drawer for mobile -->
+      <button class="drawer-menu-btn ripple" id="drawerMenuToggle">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+    
+    <div id="navItems" style="flex:1;"></div>
+    <div style="padding:16px; border-top:1px solid var(--md-sys-color-outline-variant);">
+      <div id="navUserName" style="font-weight:600; font-size:15px; color:var(--md-sys-color-on-surface);">User</div>
+      <div id="navUserEnroll" style="font-size:13px; color:var(--md-sys-color-on-surface-variant); margin-bottom:16px;">Enroll</div>
+      <button class="btn-sm ripple" id="navThemeToggle" style="width:100%; margin-bottom:12px; border:1px solid var(--md-sys-color-outline-variant); color:var(--md-sys-color-on-surface);">Toggle Theme</button>
+      <button class="btn-sm danger ripple" id="navLogoutBtn" style="width:100%;">Sign Out</button>
+    </div>
+  </nav>
+
+  <div class="main-content" id="mainContent">
+    <header class="app-header">
+      <button class="menu-btn ripple" id="menuToggle"><span class="material-symbols-outlined">menu</span></button>
+      <div class="header-title" id="headerTitle">Dashboard</div>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <button class="menu-btn ripple" id="headerNotifBtn" style="position:relative;">
+          <span class="material-symbols-outlined">notifications</span>
+          <span id="notifDot" style="display:none; position:absolute; top:12px; right:12px; width:10px; height:10px; background:var(--md-sys-color-error); border-radius:50%; border:2px solid var(--md-sys-color-surface-container);"></span>
+        </button>
+        <button class="avatar-btn ripple" id="headerAvatar">S</button>
+      </div>
+    </header>
+    <div class="page-content" id="pageContent"></div>
+  </div>
+
+  <nav class="bottom-nav" id="bottomNav"></nav>
+</div>
+
+<!-- DIALOG -->
+<div class="dialog-overlay" id="dialogOverlay">
+  <div class="dialog-box" id="dialogBox">
+    <div class="dialog-title" id="dialogTitle">Dialog</div>
+    <div style="font-size:14px; color:var(--md-sys-color-on-surface-variant); margin-bottom:24px;" id="dialogSub"></div>
+    <div id="dialogBody"></div>
+    <div class="dialog-actions" id="dialogActions"></div>
+  </div>
+</div>
+
+<!-- SNACKBAR -->
+<div class="snackbar" id="snackbar">
+  <span id="snackText">Message</span>
+  <span class="material-symbols-outlined" id="snackClose" style="cursor:pointer; font-size:20px;">close</span>
+</div>
+
+<script type="module">
+  import { initializeApp } from 'firebase/app';
+  import { getDatabase, ref, set, get, push, update, remove, onValue } from 'firebase/database';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD16Z5FiJLVJS_I3n_6Vo1r3denFRr9VJw",
+    authDomain: "cmgsir-61949.firebaseapp.com",
+    databaseURL: "https://cmgsir-61949-default-rtdb.firebaseio.com",
+    projectId: "cmgsir-61949",
+    storageBucket: "cmgsir-61949.firebasestorage.app"
+  };
+
+  let app, db, firebaseConnected = false;
+  try {
+    app = initializeApp(firebaseConfig);
+    db = getDatabase(app);
+    firebaseConnected = true;
+  } catch (e) { 
+    console.warn('Firebase init failed:', e.message); 
+  }
+
+  const CLOUD_NAME = 'aly9etwi';
+  const UPLOAD_PRESET = 'CMG sir';
+  const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+  // --- Core State ---
+  let currentUser = null, currentRole = 'student', currentPage = 'dashboard';
+  let theme = localStorage.getItem('cmg-theme') || 'system';
+  let allUsers = {}, allBatches = {}, allSchedules = {}, allBroadcasts = {}, allDoubts = {}, allAssignments = {}, allSubmissions = {}, allAttendance = {}, allNotifications = {};
+  let dataLoaded = false, isDialogOpen = false, needsRefresh = false;
+  let firebaseListeners = []; // Array to store unsub functions to prevent duplicate listeners
+
+  // Helper to convert Firebase Object safely into Array containing object keys as `id`
+  const toArray = (obj) => {
+    if (!obj || typeof obj !== 'object') return [];
+    return Object.entries(obj).map(([id, val]) => ({ id, ...(typeof val === 'object' ? val : {}) }));
+  };
+
+  const $ = id => document.getElementById(id);
+
+  // --- Theme ---
+  function applyTheme(t) {
+    const dark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    localStorage.setItem('cmg-theme', t); theme = t;
+  }
+  applyTheme(theme);
+  $('navThemeToggle')?.addEventListener('click', () => applyTheme(theme === 'light' ? 'dark' : 'light'));
+
+  // --- Ripple Effect ---
+  document.addEventListener('click', function(e) {
+    const target = e.target.closest('.ripple');
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top - size / 2;
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple-effect';
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = x + 'px'; ripple.style.top = y + 'px';
+    target.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  });
+
+  // --- Snackbar & Dialogs ---
+  let snackTimer;
+  function showSnack(msg, duration = 4000) {
+    $('snackText').textContent = msg; $('snackbar').classList.add('show');
+    clearTimeout(snackTimer);
+    snackTimer = setTimeout(() => $('snackbar').classList.remove('show'), duration);
+  }
+  $('snackClose').onclick = () => $('snackbar').classList.remove('show');
+
+  function showDialog(title, sub, bodyHTML, actions) {
+    return new Promise((resolve) => {
+      isDialogOpen = true; needsRefresh = false;
+      $('dialogTitle').textContent = title; $('dialogSub').textContent = sub || '';
+      $('dialogBody').innerHTML = bodyHTML || ''; $('dialogActions').innerHTML = '';
+      if (actions) {
+        actions.forEach(a => {
+          const btn = document.createElement('button');
+          btn.className = `btn-sm ripple ${a.class || ''}`; btn.textContent = a.label;
+          btn.onclick = () => { closeDialog(); resolve(a.value); };
+          $('dialogActions').appendChild(btn);
+        });
+      }
+      $('dialogOverlay').classList.add('active');
+    });
+  }
+  function closeDialog() {
+    $('dialogOverlay').classList.remove('active'); isDialogOpen = false;
+    if (needsRefresh) renderPage(currentPage);
+  }
+  $('dialogOverlay').addEventListener('click', (e) => { if(e.target === $('dialogOverlay')) closeDialog(); });
+
+  // --- Cloudinary ---
+  async function uploadToCloudinary(file) {
+    const fd = new FormData(); fd.append('file', file); fd.append('upload_preset', UPLOAD_PRESET);
+    const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: fd });
+    const data = await res.json(); return { url: data.secure_url };
+  }
+  async function uploadMultiple(files) {
+    const results = [];
+    for (const f of files) { const r = await uploadToCloudinary(f); results.push(r); }
+    return results;
+  }
+
+  // --- DB Helpers ---
+  function getAvatar(name) {
+    if (!name) return '?'; const parts = name.trim().split(' ');
+    return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : name[0].toUpperCase();
+  }
+  function avatarColor(name) {
+    const colors = ['#0b57d0', '#e8710a', '#0d7a3e', '#b33b9c', '#d93025', '#1967d2', '#0d652d', '#c5221f'];
+    let hash = 0; for (let i = 0; i < name?.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    return colors[Math.abs(hash) % colors.length];
+  }
+
+  async function dbPush(path, data) { const newRef = push(ref(db, path)); await set(newRef, data); return newRef.key; }
+  async function dbUpdate(path, data) { return update(ref(db, path), data); }
+  async function dbRemove(path) { return remove(ref(db, path)); }
+  async function createRecord(path, data) {
+    const id = await dbPush(path, { ...data, createdAt: new Date().toISOString() });
+    return { id, ...data };
+  }
+  async function updateRecord(path, id, data) { await dbUpdate(`${path}/${id}`, data); return true; }
+  async function deleteRecord(path, id) { await dbRemove(`${path}/${id}`); return true; }
+
+  // --- Core Data Loader ---
+  function loadAllData() {
+    if (!firebaseConnected) return;
+    
+    // Clean up old listeners to prevent duplication
+    firebaseListeners.forEach(unsub => { try { unsub(); } catch (e) {} });
+    firebaseListeners = [];
+    
+    const paths = ['users', 'batches', 'schedules', 'broadcasts', 'doubts', 'assignments', 'submissions', 'attendance', 'notifications'];
+    
+    paths.forEach((p) => {
+      const unsub = onValue(ref(db, p), (snap) => {
+        const val = snap.val() || {};
+        if (p === 'users') allUsers = val;
+        else if (p === 'batches') allBatches = val;
+        else if (p === 'schedules') allSchedules = val;
+        else if (p === 'broadcasts') allBroadcasts = val;
+        else if (p === 'doubts') allDoubts = val;
+        else if (p === 'assignments') allAssignments = val;
+        else if (p === 'submissions') allSubmissions = val;
+        else if (p === 'attendance') allAttendance = val;
+        else if (p === 'notifications') {
+          allNotifications = val;
+          if (currentUser) {
+             const unread = toArray(val).filter(n => String(n.userId) === String(currentUser.id) && !n.read).length;
+             $('notifDot').style.display = unread > 0 ? 'block' : 'none';
+          }
+        }
+
+        // Keep current user object fresh
+        if (p === 'users' && currentUser) {
+          const fresh = val[currentUser.id];
+          if (fresh) currentUser = { ...currentUser, ...fresh };
+        }
+        
+        // CRITICAL GUARD: Only render if a user is logged in
+        if (currentUser && !isDialogOpen && dataLoaded) {
+          renderPage(currentPage);
+        } else {
+          needsRefresh = true;
+        }
+      });
+      firebaseListeners.push(unsub);
+    });
+    
+    dataLoaded = true;
+  }
+
+  // --- Routing & Nav ---
+  const navConfig = {
+    student: [{id:'dashboard',icon:'space_dashboard'}, {id:'schedule',icon:'calendar_month'}, {id:'broadcasts',icon:'campaign'}, {id:'doubts',icon:'forum'}, {id:'assignments',icon:'assignment'}, {id:'attendance',icon:'how_to_reg'}, {id:'profile',icon:'person'}],
+    educator: [{id:'dashboard',icon:'space_dashboard'}, {id:'broadcasts',icon:'campaign'}, {id:'doubts',icon:'forum'}, {id:'assignments',icon:'assignment'}, {id:'schedule',icon:'calendar_month'}, {id:'attendance',icon:'how_to_reg'}, {id:'profile',icon:'person'}],
+    admin: [{id:'dashboard',icon:'space_dashboard'}, {id:'users',icon:'group'}, {id:'educators',icon:'school'}, {id:'batches',icon:'class'}, {id:'schedule',icon:'calendar_month'}, {id:'broadcasts',icon:'campaign'}, {id:'assignments',icon:'assignment'}, {id:'management',icon:'settings'}, {id:'profile',icon:'person'}]
+  };
+
+  function renderNav() {
+    const items = navConfig[currentRole] || [];
+    $('navItems').innerHTML = ''; $('bottomNav').innerHTML = '';
+    items.forEach(it => {
+      const label = it.id.charAt(0).toUpperCase() + it.id.slice(1);
+      
+      const div = document.createElement('div');
+      div.className = `nav-item ripple ${currentPage === it.id ? 'active' : ''}`;
+      div.innerHTML = `<span class="material-symbols-outlined mat-icon">${it.icon}</span>${label}`;
+      div.onclick = () => navigateTo(it.id);
+      $('navItems').appendChild(div);
+
+      const bDiv = document.createElement('button');
+      bDiv.className = `bnav-item ripple ${currentPage === it.id ? 'active' : ''}`;
+      bDiv.innerHTML = `<div class="icon-wrap"><span class="material-symbols-outlined mat-icon">${it.icon}</span></div><span>${label}</span>`;
+      bDiv.onclick = () => navigateTo(it.id);
+      $('bottomNav').appendChild(bDiv);
+    });
+
+    // Sidebar Extra Items
+    const aiDiv = document.createElement('div');
+    aiDiv.className = `nav-item ripple ${currentPage === 'ai' ? 'active' : ''}`;
+    aiDiv.innerHTML = `<span class="material-symbols-outlined mat-icon">auto_awesome</span>CMG AI`;
+    aiDiv.onclick = () => navigateTo('ai');
+    $('navItems').appendChild(aiDiv);
+
+    const credDiv = document.createElement('div');
+    credDiv.className = `nav-item ripple ${currentPage === 'credits' ? 'active' : ''}`;
+    credDiv.innerHTML = `<span class="material-symbols-outlined mat-icon">info</span>Credits`;
+    credDiv.onclick = () => navigateTo('credits');
+    $('navItems').appendChild(credDiv);
+  }
+
+  function navigateTo(page) {
+    currentPage = page; renderNav();
+    const map = { dashboard: 'Dashboard', schedule: 'Schedule', broadcasts: 'Broadcasts', doubts: 'Doubts', assignments: 'Assignments', attendance: 'Attendance', profile: 'Profile', users: 'User Management', educators: 'Educators', batches: 'Batches', management: 'Management', ai: 'CMG AI', credits: 'Credits & About' };
+    $('headerTitle').textContent = map[page] || page.charAt(0).toUpperCase() + page.slice(1);
+    renderPage(page);
+    if (window.innerWidth < 768) $('navDrawer').classList.remove('open');
+  }
+
+  function getBanner(title, sub) {
+    return `<div class="page-title-banner"><h2>${title}</h2><p>${sub}</p></div>`;
+  }
+
+  // --- Page Router ---
+  function renderPage(page) {
+    if (!dataLoaded || !currentUser) return;
+    const content = $('pageContent');
+    switch (page) {
+      case 'dashboard': renderDashboard(content); break;
+      case 'schedule': renderSchedule(content); break;
+      case 'broadcasts': renderBroadcasts(content); break;
+      case 'doubts': renderDoubts(content); break;
+      case 'assignments': renderAssignments(content); break;
+      case 'attendance': renderAttendance(content); break;
+      case 'profile': renderProfile(content); break;
+      case 'users': renderUsers(content); break;
+      case 'educators': renderEducators(content); break;
+      case 'batches': renderBatches(content); break;
+      case 'management': renderManagement(content); break;
+      case 'ai': renderAI(content); break;
+      case 'credits': renderCredits(content); break;
+      default: content.innerHTML = getBanner('Coming Soon', 'This module is in development.');
+    }
+  }
+
+  /* --- 1. DASHBOARD --- */
+  function renderDashboard(el) {
+    const user = currentUser;
+    let html = getBanner(`Welcome back, ${user.name.split(' ')[0]}`, `${user.role.charAt(0).toUpperCase()+user.role.slice(1)} Dashboard`);
+    
+    const usersArr = toArray(allUsers);
+    const batchesArr = toArray(allBatches);
+    const schedulesArr = toArray(allSchedules);
+    const broadcastsArr = toArray(allBroadcasts);
+    const doubtsArr = toArray(allDoubts);
+    const assignmentsArr = toArray(allAssignments);
+    const attendanceArr = toArray(allAttendance);
+
+    if (currentRole === 'student') {
+      const batchName = user.batch ? (batchesArr.find(b => b.id === user.batch)?.name || 'Not assigned') : 'Not assigned';
+      const today = new Date().toDateString();
+      const todaySchedules = schedulesArr.filter(s => s.batch === user.batch && s.day === today);
+      const pendingAssignments = assignmentsArr.filter(a => a.batch === user.batch && a.status !== 'submitted');
+      const attendanceData = attendanceArr.filter(a => String(a.studentId) === String(user.id));
+      const pct = attendanceData.length > 0 ? Math.round((attendanceData.filter(a => a.status === 'PRESENT').length / attendanceData.length) * 100) : 0;
+
+      html += `
+        <div class="md-grid-3" style="margin-bottom:16px;">
+          <div class="md-card stat-card"><div class="num">${todaySchedules.length}</div><div class="label">Today's Classes</div></div>
+          <div class="md-card stat-card"><div class="num">${pendingAssignments.length}</div><div class="label">Pending Assignments</div></div>
+          <div class="md-card stat-card"><div class="num">${pct}%</div><div class="label">Attendance</div></div>
+        </div>
+        <div class="md-grid-2">
+          <div class="md-card"><div class="card-title">📚 Your Batch</div><div class="card-sub" style="font-size:16px; margin-top:8px;">${batchName}</div></div>
+          <div class="md-card"><div class="card-title">📢 Latest Broadcast</div><div class="card-sub" style="margin-top:8px;">${broadcastsArr.filter(b=>b.target==='all'||b.target===user.batch).slice(-1).map(b=>b.message).join('') || 'No broadcasts yet'}</div></div>
+        </div>
+      `;
+    } else if (currentRole === 'educator') {
+      const assigned = user.batches || [];
+      const batchNames = assigned.map(id => batchesArr.find(b => b.id === id)?.name || id).join(', ') || 'None';
+      const pendingDoubts = doubtsArr.filter(d => String(d.educatorId) === String(user.id) && d.status === 'OPEN');
+      const activeAssignments = assignmentsArr.filter(a => String(a.educatorId) === String(user.id) && a.status !== 'submitted');
+      html += `
+        <div class="md-grid-3" style="margin-bottom:16px;">
+          <div class="md-card stat-card"><div class="num">${assigned.length}</div><div class="label">Assigned Batches</div></div>
+          <div class="md-card stat-card"><div class="num">${pendingDoubts.length}</div><div class="label">Pending Doubts</div></div>
+          <div class="md-card stat-card"><div class="num">${activeAssignments.length}</div><div class="label">Active Assignments</div></div>
+        </div>
+        <div class="md-card"><div class="card-title">📚 Assigned Batches</div><div class="card-sub" style="margin-top:8px; font-size:15px;">${batchNames}</div></div>
+      `;
+    } else if (currentRole === 'admin') {
+      const students = usersArr.filter(u => u.role === 'student');
+      const educators = usersArr.filter(u => u.role === 'educator');
+      const openDoubts = doubtsArr.filter(d => d.status === 'OPEN');
+      const activeAssignments = assignmentsArr.filter(a => a.status !== 'submitted');
+      html += `
+        <div class="md-grid-3" style="margin-bottom:16px;">
+          <div class="md-card stat-card"><div class="num">${students.length}</div><div class="label">Students</div></div>
+          <div class="md-card stat-card"><div class="num">${educators.length}</div><div class="label">Educators</div></div>
+          <div class="md-card stat-card"><div class="num">${batchesArr.length}</div><div class="label">Batches</div></div>
+        </div>
+        <div class="md-grid-3">
+          <div class="md-card stat-card"><div class="num">${schedulesArr.length}</div><div class="label">Schedules</div></div>
+          <div class="md-card stat-card"><div class="num">${broadcastsArr.length}</div><div class="label">Broadcasts</div></div>
+          <div class="md-card stat-card"><div class="num">${openDoubts.length}</div><div class="label">Open Doubts</div></div>
+        </div>
+        <div class="md-card"><div class="card-title">📋 Active Assignments</div><div class="card-sub">${activeAssignments.length} pending submissions system-wide</div></div>
+      `;
+    }
+    el.innerHTML = html;
+  }
+
+  /* --- 2. SCHEDULE --- */
+  function renderSchedule(el) {
+    let html = getBanner('Schedule', 'Your class schedule');
+    const user = currentUser;
+    const batchesArr = toArray(allBatches);
+    const schedulesArr = toArray(allSchedules);
+    let targetBatches = [];
+    
+    if (currentRole === 'student') targetBatches = user.batch ? [user.batch] : [];
+    else if (currentRole === 'educator') targetBatches = user.batches || [];
+    else if (currentRole === 'admin') targetBatches = batchesArr.map(b => b.id);
+
+    const schedules = schedulesArr.filter(s => targetBatches.includes(s.batch));
+    if (schedules.length === 0) {
+      html += `<div class="empty-state"><span class="material-symbols-outlined mat-icon">calendar_month</span><h4>No schedules found</h4></div>`;
+    } else {
+      schedules.sort((a,b) => (a.day || '').localeCompare(b.day || ''));
+      html += `<div class="md-grid">`;
+      schedules.forEach(s => {
+        const batch = batchesArr.find(b => b.id === s.batch);
+        html += `<div class="md-card">
+          <div class="card-title">${s.subject || 'Untitled'}</div>
+          <div class="card-sub">${batch?.name || 'Unknown Batch'} · ${s.educatorName || 'Educator'}</div>
+          <div class="card-meta" style="margin-top:16px;">
+            <span class="chip"><span class="material-symbols-outlined" style="font-size:16px;margin-right:4px;">event</span> ${s.day || 'TBD'}</span>
+            <span class="chip"><span class="material-symbols-outlined" style="font-size:16px;margin-right:4px;">schedule</span> ${s.startTime||'--'} - ${s.endTime||'--'}</span>
+            ${s.room ? `<span class="chip"><span class="material-symbols-outlined" style="font-size:16px;margin-right:4px;">meeting_room</span> ${s.room}</span>` : ''}
+          </div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    el.innerHTML = html;
+  }
+
+  /* --- 3. BROADCASTS --- */
+  function renderBroadcasts(el) {
+    let html = getBanner('Broadcasts', 'Announcements & Updates');
+    if (currentRole === 'educator' || currentRole === 'admin') {
+      html += `<button class="btn-primary ripple" style="width:auto; margin-bottom:24px;" onclick="window._newBroadcast()">+ New Broadcast</button>`;
+      window._newBroadcast = () => openBroadcastDialog();
+    }
+    
+    const broadcastsArr = toArray(allBroadcasts);
+    let broadcasts = [];
+    if (currentRole === 'student') broadcasts = broadcastsArr.filter(b => b.target === 'all' || b.target === currentUser.batch);
+    else if (currentRole === 'educator') broadcasts = broadcastsArr.filter(b => String(b.educatorId) === String(currentUser.id));
+    else broadcasts = broadcastsArr;
+    
+    if (broadcasts.length === 0) {
+      html += `<div class="empty-state"><span class="material-symbols-outlined mat-icon">campaign</span><h4>No broadcasts</h4></div>`;
+    } else {
+      broadcasts.sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || '')); // Reverse sort logic
+      const usersArr = toArray(allUsers);
+      const batchesArr = toArray(allBatches);
+      
+      broadcasts.reverse().forEach(b => {
+        const author = usersArr.find(u => u.id === b.educatorId);
+        const isEdu = author?.role === 'educator';
+        const targetLabel = b.target === 'all' ? 'All Students' : (batchesArr.find(bb => bb.id === b.target)?.name || b.target || 'Unknown');
+        html += `<div class="md-card">
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div class="avatar-circle small" style="background:${avatarColor(author?.name)}">${getAvatar(author?.name)}</div>
+            <div>
+              <strong style="font-family:'Google Sans', sans-serif; font-size:16px;">${author?.name||'Unknown'}</strong> 
+              ${isEdu ? '<span class="edu-badge" style="margin-left:8px;"><span class="material-symbols-outlined" style="font-size:12px;">school</span>EDU</span>' : ''}
+              <div style="font-size:12px; color:var(--md-sys-color-on-surface-variant); margin-top:2px;">${b.createdAt ? new Date(b.createdAt).toLocaleString() : 'Just now'} · 🎯 ${targetLabel}</div>
+            </div>
+          </div>
+          <div style="margin-top:20px; font-size:16px; line-height:1.5;">${b.message || ''}</div>
+          ${b.imageUrl ? `<img src="${b.imageUrl}" style="max-width:100%; max-height:300px; border-radius:16px; margin-top:16px; object-fit:cover; border:1px solid var(--md-sys-color-outline-variant);" alt="broadcast" />` : ''}
+          ${currentRole === 'admin' ? `<div class="card-actions" style="margin-top:16px;"><button class="btn-sm danger ripple" onclick="window._delBroadcast('${b.id}')">Delete</button></div>` : ''}
+        </div>`;
+      });
+      if (currentRole === 'admin') {
+        window._delBroadcast = async (id) => {
+          if (confirm('Delete this broadcast?')) { await deleteRecord('broadcasts', id); showSnack('Broadcast deleted'); }
+        };
+      }
+    }
+    el.innerHTML = html;
+  }
+
+  async function openBroadcastDialog() {
+    const batchesArr = toArray(allBatches);
+    let batchOpts = '';
+    if (currentRole === 'educator') {
+      const assigned = currentUser.batches || [];
+      batchOpts = assigned.map(id => {
+        const b = batchesArr.find(bb => bb.id === id);
+        return b ? `<option value="${b.id}">${b.name}</option>` : '';
+      }).join('');
+      batchOpts += `<option value="all">All Assigned Batches</option>`;
+    } else if (currentRole === 'admin') {
+      batchOpts = batchesArr.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+      batchOpts += `<option value="all">All Students</option>`;
+    }
+    
+    const html = `
+      <div class="md-field"><label>Target Audience</label><select id="bcastTarget">${batchOpts}</select></div>
+      <div class="md-field"><label>Message</label><textarea id="bcastMessage" rows="4" placeholder="Type your announcement here..."></textarea></div>
+      <div class="md-field"><label>Attach Image (optional)</label><input type="file" id="bcastImage" accept="image/*" /></div>
+    `;
+    const val = await showDialog('New Broadcast', '', html, [{ label: 'Cancel', class: 'outline' }, { label: 'Send', class: 'primary', value: 'send' }]);
+    
+    if (val === 'send') {
+      const target = $('bcastTarget').value;
+      const message = $('bcastMessage').value.trim();
+      const file = $('bcastImage').files[0];
+      
+      if (!target || !message) return showSnack('Please fill all required fields');
+      
+      let imageUrl = null;
+      if (file) {
+        try { const upload = await uploadToCloudinary(file); imageUrl = upload.url; }
+        catch (e) { return showSnack('Image upload failed'); }
+      }
+      
+      await createRecord('broadcasts', { educatorId: currentUser.id, educatorName: currentUser.name, target, message, imageUrl, role: currentRole });
+      showSnack('Broadcast sent!');
+    }
+  }
+
+  /* --- 4. DOUBTS (FIXED DB RELATIONSHIPS) --- */
+  function renderDoubts(el) {
+    let html = getBanner('Doubts', 'Ask questions and clear your concepts');
+    const doubtsArr = toArray(allDoubts);
+    const usersArr = toArray(allUsers);
+
+    if (currentRole === 'student') {
+      html += `<button class="btn-primary ripple" style="width:auto; margin-bottom:24px;" onclick="window._newDoubt()">+ Ask a Question</button>`;
+      const doubts = doubtsArr.filter(d => String(d.studentId) === String(currentUser.id));
+      if (!doubts.length) html += `<div class="empty-state"><span class="material-symbols-outlined mat-icon">forum</span><h4>No doubts asked yet</h4></div>`;
+      else doubts.reverse().forEach(d => html += doubtCard(d, true, usersArr));
+    } else if (currentRole === 'educator') {
+      const doubts = doubtsArr.filter(d => String(d.educatorId) === String(currentUser.id));
+      if (!doubts.length) html += `<div class="empty-state"><span class="material-symbols-outlined mat-icon">forum</span><h4>No doubts assigned to you</h4></div>`;
+      else doubts.reverse().forEach(d => html += doubtCard(d, false, usersArr));
+    } else if (currentRole === 'admin') {
+      if (!doubtsArr.length) html += `<div class="empty-state"><span class="material-symbols-outlined mat-icon">forum</span><h4>No doubts in system</h4></div>`;
+      else doubtsArr.reverse().forEach(d => html += doubtCard(d, false, usersArr));
+    }
+    el.innerHTML = html;
+
+    window._newDoubt = async () => {
+      const educators = usersArr.filter(u => String(u.role).toLowerCase() === 'educator');
+      const eduOpts = educators.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+      const dHtml = `
+        <div class="md-field"><label>Select Educator</label><select id="dEdu">${eduOpts}</select></div>
+        <div class="md-field"><label>Subject / Topic</label><input type="text" id="dTop" placeholder="e.g. Kinematics" /></div>
+        <div class="md-field"><label>Your Question</label><textarea id="dQue" rows="4" placeholder="Describe your doubt in detail..."></textarea></div>
+        <div class="md-field"><label>Images (optional)</label><input type="file" id="dImg" accept="image/*" multiple /></div>
+      `;
+      const v = await showDialog('Ask Doubt', '', dHtml, [{label:'Cancel', class:'outline'}, {label:'Submit', class:'primary', value:'submit'}]);
+      if (v === 'submit') {
+        const eid = $('dEdu').value;
+        const sub = $('dTop').value.trim();
+        const que = $('dQue').value.trim();
+        const files = $('dImg').files;
+        if(!eid || !que) return showSnack('Please fill all required fields');
+        
+        let images = [];
+        if (files && files.length) {
+          try { const uploads = await uploadMultiple(Array.from(files)); images = uploads.map(u => u.url); }
+          catch (e) { return showSnack('Image upload failed'); }
+        }
+        await createRecord('doubts', { studentId: currentUser.id, educatorId: eid, subject: sub || 'General', question: que, images, status: 'OPEN', replies: [] });
+        showSnack('Question submitted successfully');
+      }
+    };
+
+    window._replyDoubt = async (id) => {
+      const dHtml = `
+        <div class="md-field"><label>Your Answer</label><textarea id="dRep" rows="4"></textarea></div>
+        <div class="md-field"><label>Attach Images (optional)</label><input type="file" id="dRepImg" accept="image/*" multiple /></div>
+      `;
+      const v = await showDialog('Reply to Doubt', '', dHtml, [{label:'Cancel', class:'outline'}, {label:'Send Reply', class:'primary', value:'send'}]);
+      if (v === 'send') {
+        const text = $('dRep').value.trim();
+        const files = $('dRepImg').files;
+        if(!text) return showSnack('Please enter a reply');
+        
+        let images = [];
+        if (files && files.length) {
+          try { const uploads = await uploadMultiple(Array.from(files)); images = uploads.map(u => u.url); }
+          catch (e) { return showSnack('Image upload failed'); }
+        }
+        
+        const doubt = allDoubts[id];
+        const reps = doubt.replies || [];
+        reps.push({ authorId: currentUser.id, authorName: currentUser.name, text, images, createdAt: new Date().toISOString() });
+        await updateRecord('doubts', id, { replies: reps, status: 'ANSWERED' });
+        showSnack('Reply sent successfully!');
+      }
+    };
+    
+    window._resolveDoubt = async (id) => {
+      await updateRecord('doubts', id, { status: 'RESOLVED' });
+      showSnack('Doubt marked as resolved');
+    };
+  }
+
+  function doubtCard(d, isStudent, usersArr) {
+    const statusColor = d.status === 'OPEN' ? 'orange' : d.status === 'ANSWERED' ? 'blue' : 'green';
+    const stu = usersArr.find(u => String(u.id) === String(d.studentId));
+    const edu = usersArr.find(u => String(u.id) === String(d.educatorId));
+    const reps = d.replies || [];
+    
+    let html = `
+      <div class="md-card">
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+          <strong style="font-family:'Google Sans',sans-serif; font-size:18px;">${d.subject || 'General'}</strong>
+          <span class="chip ${statusColor}">${d.status}</span>
+        </div>
+        <p style="color:var(--md-sys-color-on-surface-variant); font-size:13px; margin-bottom:16px;">
+          Asked by <strong>${stu?.name||'Unknown'}</strong> · Assigned to <strong>${edu?.name||'Unknown'}</strong>
+        </p>
+        <div style="background:var(--md-sys-color-surface); padding:16px; border-radius:12px; font-size:15px; border:1px solid var(--md-sys-color-outline-variant);">
+          ${d.question}
+          ${d.images && d.images.length ? `<div style="display:flex; gap:12px; margin-top:16px; flex-wrap:wrap;">${d.images.map(img => `<img src="${img}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--md-sys-color-outline-variant);" />`).join('')}</div>` : ''}
+        </div>
+    `;
+    
+    if (reps.length) {
+      html += `<div style="margin-top:20px; border-left:4px solid var(--md-sys-color-primary-container); padding-left:16px;">`;
+      reps.forEach(r => {
+        html += `<div style="margin-bottom:16px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+            <div class="avatar-circle small" style="background:${avatarColor(r.authorName)}">${getAvatar(r.authorName)}</div>
+            <strong style="font-size:14px;">${r.authorName}</strong>
+          </div>
+          <div style="font-size:15px; color:var(--md-sys-color-on-surface);">${r.text}</div>
+          ${r.images && r.images.length ? `<div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">${r.images.map(img => `<img src="${img}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--md-sys-color-outline-variant);" />`).join('')}</div>` : ''}
+        </div>`;
+      });
+      html += `</div>`;
+    } else {
+      html += `<div style="margin-top:16px; font-size:14px; color:var(--md-sys-color-on-surface-variant); font-style:italic;">No replies yet.</div>`;
+    }
+    
+    html += `<div class="card-actions">`;
+    if (isStudent && d.status === 'ANSWERED') html += `<button class="btn-sm primary ripple" onclick="window._resolveDoubt('${d.id}')">Mark as Resolved</button>`;
+    if (!isStudent && d.status === 'OPEN') html += `<button class="btn-sm primary ripple" onclick="window._replyDoubt('${d.id}')">Write Reply</button>`;
+    html += `</div></div>`;
+    return html;
+  }
+
+  /* --- 5. ASSIGNMENTS --- */
+  function renderAssignments(el) {
+    let html = getBanner('Assignments', 'Track and submit your work');
+    const assignmentsArr = toArray(allAssignments);
+    const submissionsArr = toArray(allSubmissions);
+    const usersArr = toArray(allUsers);
+    const batchesArr = toArray(allBatches);
+
+    if (currentRole === 'student') {
+      const assignments = assignmentsArr.filter(a => a.batch === currentUser.batch);
+      if (assignments.length === 0) {
+        html += `<div class="empty-state"><span class="material-symbols-outlined mat-icon">assignment</span><h4>No assignments found</h4></div>`;
+      } else {
+        assignments.sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+        html += `<div class="md-grid">`;
+        for (const a of assignments) {
+          const sub = submissionsArr.find(s => s.assignmentId === a.id && String(s.studentId) === String(currentUser.id));
+          const status = sub ? sub.status : 'PENDING';
+          const statusColor = status === 'PENDING' ? 'orange' : status === 'SUBMITTED' ? 'blue' : 'green';
+          html += `<div class="md-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+              <strong style="font-family:'Google Sans', sans-serif; font-size:18px;">${a.title || 'Untitled'}</strong> 
+              <span class="chip ${statusColor}">${status}</span>
+            </div>
+            <div class="card-sub">${a.subject || 'General'} · Assigned by ${a.educatorName||'Educator'}</div>
+            <div class="card-meta">Due Date: <strong>${a.dueDate || 'No Date'}</strong></div>
+            <div style="margin-top:16px; font-size:14px; background:var(--md-sys-color-surface); padding:12px; border-radius:12px; border:1px solid var(--md-sys-color-outline-variant);">
+              ${a.instructions || 'No instructions provided.'}
+            </div>
+            <div class="card-actions">
+              ${status === 'PENDING' ? `<button class="btn-sm primary ripple" onclick="window._submitAssignment('${a.id}')">Submit Work</button>` : ''}
+              ${status !== 'PENDING' ? `<span class="chip outline"><span class="material-symbols-outlined" style="font-size:16px; margin-right:4px;">done_all</span> Submitted</span>` : ''}
+            </div>
+          </div>`;
+        }
+        html += `</div>`;
+      }
+      window._submitAssignment = async (id) => { await openSubmitDialog(id); };
+    } else if (currentRole === 'educator') {
+      html += `<button class="btn-primary ripple" style="width:auto; margin-bottom:24px;" onclick="window._newAssignment()">+ Create Assignment</button>`;
+      window._newAssignment = () => openNewAssignmentDialog();
+      const assignments = assignmentsArr.filter(a => String(a.educatorId) === String(currentUser.id));
+      if (assignments.length === 0) {
+        html += `<div class="empty-state"><span class="material-symbols-outlined mat-icon">assignment</span><h4>No assignments created</h4></div>`;
+      } else {
+        assignments.sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+        html += `<div class="md-grid">`;
+        for (const a of assignments) {
+          const subs = submissionsArr.filter(s => s.assignmentId === a.id);
+          html += `<div class="md-card">
+            <div style="margin-bottom:8px;"><strong style="font-family:'Google Sans', sans-serif; font-size:18px;">${a.title || 'Untitled'}</strong></div>
+            <div class="card-sub">${a.subject || 'General'} · Batch: <span class="chip" style="padding:2px 8px; font-size:11px;">${a.batch ? (batchesArr.find(b=>b.id===a.batch)?.name||a.batch) : 'All'}</span></div>
+            <div class="card-meta">Due Date: ${a.dueDate || 'TBD'}</div>
+            <div class="card-meta" style="margin-top:12px; padding:8px; background:var(--md-sys-color-surface); border-radius:8px;">📥 <strong>${subs.length}</strong> total submissions</div>
+            ${subs.length ? `<div class="card-actions"><button class="btn-sm outline ripple" onclick="window._viewSubmissions('${a.id}')">Review Submissions</button></div>` : ''}
+          </div>`;
+        }
+        html += `</div>`;
+      }
+      window._viewSubmissions = async (id) => {
+        const subs = submissionsArr.filter(s => s.assignmentId === id);
+        let html2 = subs.map(s => {
+          const student = usersArr.find(u => String(u.id) === String(s.studentId));
+          return `<div class="md-card" style="box-shadow:none; border:1px solid var(--md-sys-color-outline-variant);">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+              <div class="avatar-circle small" style="background:${avatarColor(student?.name)}">${getAvatar(student?.name)}</div>
+              <strong>${student?.name||'Unknown'}</strong> (${student?.enroll||''})
+            </div>
+            <div style="font-size:15px; background:var(--md-sys-color-surface); padding:12px; border-radius:8px;">${s.text||'No text provided.'}</div> 
+            ${s.images && s.images.length ? `<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">${s.images.map(img => `<img src="${img}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--md-sys-color-outline-variant);" />`).join('')}</div>` : ''}
+            <div style="margin-top:16px; display:flex; gap:12px; align-items:center;">
+              <span class="chip ${s.status==='SUBMITTED'?'blue':'green'}">${s.status}</span> 
+              ${s.status==='SUBMITTED' ? `<button class="btn-sm primary ripple" onclick="window._markChecked('${s.id}')">Mark as Checked</button>` : ''}
+            </div>
+          </div>`;
+        }).join('');
+        await showDialog('Student Submissions', `Reviewing assignment responses`, html2, [{ label: 'Close', class: 'outline', value: null }]);
+      };
+      window._markChecked = async (subId) => {
+        await updateRecord('submissions', subId, { status: 'CHECKED' });
+        showSnack('Marked as checked');
+        closeDialog(); 
+      };
+    } else if (currentRole === 'admin') {
+      if (assignmentsArr.length === 0) {
+        html += `<div class="empty-state"><span class="material-symbols-outlined mat-icon">assignment</span><h4>No assignments</h4></div>`;
+      } else {
+        assignmentsArr.sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+        html += `<div class="md-grid">`;
+        assignmentsArr.forEach(a => {
+          const subs = submissionsArr.filter(s => s.assignmentId === a.id);
+          html += `<div class="md-card">
+            <div><strong style="font-family:'Google Sans',sans-serif; font-size:18px;">${a.title || 'Untitled'}</strong></div>
+            <div class="card-sub" style="margin-top:8px;">${a.subject || 'General'} · Educator: ${a.educatorName||'Unknown'}</div>
+            <div class="card-meta">Batch: ${a.batch ? (batchesArr.find(b=>b.id===a.batch)?.name||a.batch) : 'All'} · Due: ${a.dueDate || 'TBD'}</div>
+            <div class="card-meta" style="margin-top:12px;">📥 <strong>${subs.length}</strong> total submissions</div>
+          </div>`;
+        });
+        html += `</div>`;
+      }
+    }
+    el.innerHTML = html;
+  }
+
+  async function openSubmitDialog(assignmentId) {
+    const html = `
+      <div class="md-field"><label>Your Answer / Solution</label><textarea id="subText" rows="5" placeholder="Type your response here..."></textarea></div>
+      <div class="md-field"><label>Attach Images/Photos (optional)</label><input type="file" id="subImages" accept="image/*" multiple /></div>
+    `;
+    const val = await showDialog('Submit Assignment', '', html, [{ label: 'Cancel', class: 'outline' }, { label: 'Submit', class: 'primary', value: 'submit' }]);
+    if (val === 'submit') {
+      const text = $('subText').value.trim();
+      const files = $('subImages').files;
+      if (!text) return showSnack('Please enter your submission text');
+      
+      let images = [];
+      if (files && files.length) {
+        try { const uploads = await uploadMultiple(Array.from(files)); images = uploads.map(u => u.url); }
+        catch (e) { return showSnack('Image upload failed'); }
+      }
+      
+      const submissionsArr = toArray(allSubmissions);
+      const existing = submissionsArr.find(s => s.assignmentId === assignmentId && String(s.studentId) === String(currentUser.id));
+      if (existing) {
+        await updateRecord('submissions', existing.id, { text, images, status: 'SUBMITTED', updatedAt: new Date().toISOString() });
+      } else {
+        await createRecord('submissions', { assignmentId, studentId: currentUser.id, studentName: currentUser.name, text, images, status: 'SUBMITTED' });
+      }
+      showSnack('Assignment submitted successfully!');
+    }
+  }
+
+  async function openNewAssignmentDialog() {
+    const batchesArr = toArray(allBatches);
+    const batches = currentUser.batches || [];
+    const batchOpts = batches.map(id => {
+      const b = batchesArr.find(bb => bb.id === id);
+      return b ? `<option value="${b.id}">${b.name}</option>` : '';
+    }).join('');
+    
+    const html = `
+      <div class="md-field"><label>Target Batch</label><select id="assignBatch">${batchOpts}</select></div>
+      <div class="md-field"><label>Subject</label><input type="text" id="assignSubject" placeholder="e.g. Mathematics" /></div>
+      <div class="md-field"><label>Assignment Title</label><input type="text" id="assignTitle" placeholder="e.g. Chapter 1 Exercise" /></div>
+      <div class="md-field"><label>Instructions</label><textarea id="assignInstructions" rows="4" placeholder="Detail what the students need to do..."></textarea></div>
+      <div class="md-field"><label>Due Date</label><input type="date" id="assignDue" /></div>
+    `;
+    const val = await showDialog('Create Assignment', 'Assign work to your students', html, [{ label: 'Cancel', class: 'outline' }, { label: 'Create', class: 'primary', value: 'create' }]);
+    if (val === 'create') {
+      const batch = $('assignBatch').value;
+      const subject = $('assignSubject').value.trim();
+      const title = $('assignTitle').value.trim();
+      const instructions = $('assignInstructions').value.trim();
+      const dueDate = $('assignDue').value;
+      
+      if (!batch || !title) return showSnack('Please select a batch and enter a title');
+      
+      await createRecord('assignments', { batch, educatorId: currentUser.id, educatorName: currentUser.name, subject: subject || 'General', title, instructions: instructions || '', dueDate: dueDate || '', status: 'active' });
+      showSnack('Assignment created and published!');
+    }
+  }
+
+  /* --- 6. ATTENDANCE --- */
+  function renderAttendance(el) {
+    let html = getBanner('Attendance', 'Track class presence');
+    const attendanceArr = toArray(allAttendance);
+    const usersArr = toArray(allUsers);
+    const batchesArr = toArray(allBatches);
+
+    if (currentRole === 'student') {
+      const data = attendanceArr.filter(a => String(a.studentId) === String(currentUser.id));
+      const total = data.length;
+      const present = data.filter(a => a.status === 'PRESENT').length;
+      const pct = total > 0 ? Math.round((present / total) * 100) : 0;
+      html += `
+        <div class="md-grid-3" style="margin-bottom:24px;">
+          <div class="md-card stat-card"><div class="num">${total}</div><div class="label">Total Classes</div></div>
+          <div class="md-card stat-card"><div class="num">${present}</div><div class="label">Classes Attended</div></div>
+          <div class="md-card stat-card"><div class="num">${pct}%</div><div class="label">Attendance Rate</div></div>
+        </div>
+        <div class="md-card"><div class="card-title">Recent History</div>
+          <div style="margin-top:16px;">
+            ${data.length > 0 ? data.slice(0,10).map(d => `
+              <div style="padding:12px 0; border-bottom:1px solid var(--md-sys-color-outline-variant); display:flex; justify-content:space-between;">
+                <span style="font-weight:500;">${d.date||'Unknown Date'}</span>
+                <span class="chip ${d.status==='PRESENT'?'green':'red'}">${d.status}</span>
+              </div>`).join('') : '<div class="text-secondary">No records found.</div>'}
+          </div>
+        </div>
+      `;
+    } else if (currentRole === 'educator') {
+      const assigned = currentUser.batches || [];
+      const batchOpts = assigned.map(id => {
+        const b = batchesArr.find(bb => bb.id === id);
+        return b ? `<option value="${b.id}">${b.name}</option>` : '';
+      }).join('');
+      
+      const today = new Date().toISOString().split('T')[0];
+      
+      html += `
+        <div class="md-card"><div class="card-title">Mark Attendance</div>
+          <div class="md-field"><label>Select Batch</label><select id="attBatch">${batchOpts}</select></div>
+          <div class="md-field"><label>Class Date</label><input type="date" id="attDate" value="${today}" /></div>
+          <button class="btn-primary ripple" style="width:auto;" id="loadAttBtn">Load Student Roster</button>
+          
+          <div id="attStudents" style="margin-top:32px;"></div>
+        </div>
+      `;
+      setTimeout(() => {
+        $('loadAttBtn')?.addEventListener('click', async () => {
+          const batchId = $('attBatch')?.value;
+          const date = $('attDate')?.value;
+          if (!batchId || !date) return showSnack('Select batch and date');
+          
+          const students = usersArr.filter(u => u.role === 'student' && u.batch === batchId);
+          const container = $('attStudents');
+          
+          if (students.length === 0) { 
+            container.innerHTML = '<div class="empty-state"><h4>No students in this batch</h4></div>'; 
+            return; 
+          }
+          
+          let list = `<div style="font-weight:600; margin-bottom:16px; font-size:16px;">Student Roster (${students.length})</div>`;
+          list += students.map(s => {
+            const existing = attendanceArr.find(a => String(a.studentId) === String(s.id) && a.date === date);
+            const status = existing?.status || 'ABSENT';
+            return `<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--md-sys-color-outline-variant);">
+              <div class="avatar-circle small" style="background:${avatarColor(s.name)}">${getAvatar(s.name)}</div>
+              <div style="flex:1;">
+                <strong style="font-size:15px;">${s.name}</strong> 
+                <div style="font-size:12px; color:var(--md-sys-color-on-surface-variant);">${s.enroll}</div>
+              </div>
+              <select class="attStatusSelect" data-student="${s.id}" style="padding:10px 16px;border-radius:8px;border:1px solid var(--md-sys-color-outline-variant);background:var(--md-sys-color-surface-container);color:var(--md-sys-color-on-surface); font-weight:600;">
+                <option value="PRESENT" ${status==='PRESENT'?'selected':''}>Present</option>
+                <option value="ABSENT" ${status==='ABSENT'?'selected':''}>Absent</option>
+              </select>
+            </div>`;
+          }).join('');
+          
+          container.innerHTML = list + `<div style="margin-top:24px; text-align:right;"><button class="btn-primary ripple" style="width:auto;" id="saveAttBtn">Save Attendance</button></div>`;
+          
+          $('saveAttBtn')?.addEventListener('click', async () => {
+            const selects = container.querySelectorAll('.attStatusSelect');
+            const promises = [];
+            selects.forEach(sel => {
+              const studentId = sel.dataset.student;
+              const status = sel.value;
+              const existing = attendanceArr.find(a => String(a.studentId) === String(studentId) && a.date === date);
+              if (existing) {
+                promises.push(updateRecord('attendance', existing.id, { status, date, batch: batchId, educatorId: currentUser.id }));
+              } else {
+                promises.push(createRecord('attendance', { studentId, batch: batchId, date, status, educatorId: currentUser.id }));
+              }
+            });
+            await Promise.all(promises);
+            showSnack('Attendance saved successfully!');
+          });
+        });
+      }, 100);
+    } else if (currentRole === 'admin') {
+      const batchOpts = batchesArr.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+      html += `
+        <div class="md-card"><div class="card-title">Overall Attendance Reports</div>
+          <div class="md-field"><label>Select Batch to View</label><select id="attBatchAdmin">${batchOpts}</select></div>
+          <button class="btn-sm outline ripple" id="viewAttAdmin">Generate Report</button>
+          <div id="attAdminResult" style="margin-top:32px;"></div>
+        </div>
+      `;
+      setTimeout(() => {
+        $('viewAttAdmin')?.addEventListener('click', () => {
+          const batchId = $('attBatchAdmin')?.value;
+          const students = usersArr.filter(u => u.role === 'student' && u.batch === batchId);
+          const container = $('attAdminResult');
+          
+          if (students.length === 0) { 
+            container.innerHTML = '<div class="empty-state"><h4>No students in selected batch</h4></div>'; 
+            return; 
+          }
+          
+          let rows = `<div style="font-weight:600; margin-bottom:16px;">Attendance Summary</div>`;
+          rows += students.map(s => {
+            const data = attendanceArr.filter(a => String(a.studentId) === String(s.id));
+            const total = data.length;
+            const present = data.filter(a => a.status === 'PRESENT').length;
+            const pct = total > 0 ? Math.round((present / total) * 100) : 0;
+            return `<div style="display:flex;justify-content:space-between; align-items:center; padding:12px 0;border-bottom:1px solid var(--md-sys-color-outline-variant);">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div class="avatar-circle small" style="background:${avatarColor(s.name)}">${getAvatar(s.name)}</div>
+                <span style="font-weight:500;">${s.name}</span>
+              </div>
+              <div style="text-align:right;">
+                <span class="chip" style="margin-bottom:4px;">${present}/${total} classes</span><br>
+                <span style="font-weight:700; color:${pct > 75 ? 'var(--md-sys-color-success)' : 'var(--md-sys-color-error)'}">${pct}%</span>
+              </div>
+            </div>`;
+          }).join('');
+          container.innerHTML = rows;
+        });
+      }, 100);
+    }
+    el.innerHTML = html;
+  }
+
+  /* --- 7. PROFILE --- */
+  function renderProfile(el) {
+    const user = currentUser;
+    const batchesArr = toArray(allBatches);
+    const batchName = user.batch ? (batchesArr.find(b => b.id === user.batch)?.name || 'Not assigned') : 'Not assigned';
+    const html = getBanner('My Profile', 'Manage your account') + `
+      <div class="md-card" style="text-align:center; padding:48px 20px;">
+        <div class="avatar-circle large" style="margin:0 auto; background:${avatarColor(user.name)};">${getAvatar(user.name)}</div>
+        <h2 style="margin-top:20px; font-family:'Google Sans',sans-serif; font-size:28px;">${user.name}</h2>
+        <div style="color:var(--md-sys-color-on-surface-variant); font-size:16px; margin-top:8px;">${user.enroll} · ${user.role.charAt(0).toUpperCase()+user.role.slice(1)}</div>
+        <div style="color:var(--md-sys-color-on-surface-variant); font-size:16px; margin-top:4px;">Batch: <strong>${batchName}</strong></div>
+        ${user.role === 'educator' ? `<div style="margin-top:16px;"><span class="edu-badge"><span class="material-symbols-outlined" style="font-size:14px; margin-right:4px;">school</span>EDUCATOR</span></div>` : ''}
+      </div>
+      <div class="md-card">
+        <div class="card-title">Security & Account</div>
+        <div class="card-actions" style="flex-direction:column; align-items:stretch; gap:12px; margin-top:24px;">
+          <button class="btn-sm outline ripple" style="padding:12px;" onclick="window._changePass()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:8px;">password</span> Change Password</button>
+          <button class="btn-sm danger ripple" style="padding:12px;" onclick="window._logout()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:8px;">logout</span> Sign Out</button>
+        </div>
+      </div>
+    `;
+    el.innerHTML = html;
+    window._changePass = openChangePasswordDialog;
+    window._logout = logoutUser;
+  }
+
+  async function openChangePasswordDialog() {
+    const html = `
+      <div class="md-field"><label>Current Password</label><input type="password" id="oldPass" /></div>
+      <div class="md-field"><label>New Password</label><input type="password" id="newPass" /></div>
+      <div class="md-field"><label>Confirm New Password</label><input type="password" id="confirmNewPass" /></div>
+    `;
+    const val = await showDialog('Change Password', '', html, [{ label: 'Cancel', class: 'outline' }, { label: 'Update Password', class: 'primary', value: 'update' }]);
+    if (val === 'update') {
+      const old = $('oldPass').value; const newp = $('newPass').value; const confirm = $('confirmNewPass').value;
+      if (!old || !newp || newp !== confirm) return showSnack('Please check your passwords. They must match.');
+      if (newp.length < 6) return showSnack('Password must be at least 6 characters');
+      if (old !== currentUser.password) return showSnack('Current password incorrect');
+      await updateRecord('users', currentUser.id, { password: newp });
+      currentUser.password = newp;
+      showSnack('Password updated successfully');
+    }
+  }
+  function logoutUser() {
+    if (confirm('Sign out of your account?')) { 
+      // Stop listeners to prevent background updates while logged out
+      firebaseListeners.forEach(unsub => { try { unsub(); } catch(e){} });
+      location.reload(); 
+    }
+  }
+
+  /* --- 8. ADMIN: USERS --- */
+  function renderUsers(el) {
+    let html = getBanner('User Management', 'Manage all students and educators') + `
+      <div class="md-card"><div class="md-field" style="margin-bottom:0;"><label>Search Directory</label><input type="text" id="userSearch" placeholder="Search by name or enrollment number..." /></div></div>
+      <div id="userList"></div>
+    `;
+    el.innerHTML = html;
+    renderUserList('');
+    $('userSearch')?.addEventListener('input', (e) => renderUserList(e.target.value));
+  }
+
+  function renderUserList(query) {
+    const container = $('userList'); if (!container) return;
+    const usersArr = toArray(allUsers);
+    const batchesArr = toArray(allBatches);
+    let users = usersArr;
+    
+    if (query) {
+      const q = query.toLowerCase();
+      users = users.filter(u => u.name.toLowerCase().includes(q) || u.enroll.toLowerCase().includes(q));
+    }
+    
+    if (users.length === 0) {
+      container.innerHTML = `<div class="empty-state"><span class="material-symbols-outlined mat-icon">group</span><h4>No users found</h4></div>`;
+      return;
+    }
+    
+    container.innerHTML = users.map(u => {
+      const isAdmin = u.id === currentUser.id;
+      return `<div class="md-card" style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; padding:20px 24px;">
+        <div class="avatar-circle" style="background:${avatarColor(u.name)};">${getAvatar(u.name)}</div>
+        <div style="flex:1; min-width:200px;">
+          <strong style="font-size:18px; font-family:'Google Sans', sans-serif;">${u.name}</strong> 
+          <span style="color:var(--md-sys-color-on-surface-variant); margin-left:8px;">(${u.enroll})</span><br/>
+          <div style="margin-top:8px;">
+            <span class="chip">${u.role.toUpperCase()}</span> 
+            ${u.batch ? `<span class="chip outline" style="margin-left:8px;">${batchesArr.find(b=>b.id===u.batch)?.name||u.batch}</span>` : ''}
+          </div>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          ${!isAdmin ? `<button class="btn-sm ${u.disabled ? 'primary' : 'outline'} ripple" onclick="window._toggleUser('${u.id}','${!u.disabled}')">${u.disabled ? 'Enable Account' : 'Disable Account'}</button>` : ''}
+          ${!isAdmin && u.role !== 'admin' ? `<button class="btn-sm outline ripple" onclick="window._changeRole('${u.id}','${u.role}')">Change Role</button>` : ''}
+          ${!isAdmin ? `<button class="btn-sm primary ripple" onclick="window._changeBatch('${u.id}')">Set Batch</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+
+    window._toggleUser = async (id, disable) => {
+      try { await updateRecord('users', id, { disabled: disable === 'true' }); showSnack(`User ${disable === 'true' ? 'disabled' : 'enabled'}`); }
+      catch (e) { showSnack('Error updating user'); }
+    };
+    window._changeRole = async (id, currentRoleVal) => {
+      const newRole = currentRoleVal === 'student' ? 'educator' : 'student';
+      if (confirm(`Change this user's role to ${newRole.toUpperCase()}?`)) {
+        try { await updateRecord('users', id, { role: newRole }); showSnack(`Role successfully changed to ${newRole}`); }
+        catch (e) { showSnack('Error updating role'); }
+      }
+    };
+    window._changeBatch = async (id) => {
+      const user = allUsers[id];
+      if (!user) return showSnack('User not found');
+      const batchesArr = toArray(allBatches);
+      if (batchesArr.length === 0) return showSnack('Please create a batch first in the Batches tab.');
+      
+      const batchOpts = batchesArr.map(b => `<option value="${b.id}" ${user?.batch===b.id?'selected':''}>${b.name}</option>`).join('');
+      const html = `<div class="md-field"><label>Select Batch for ${user.name}</label><select id="batchSelect"><option value="">Remove from batch (None)</option>${batchOpts}</select></div>`;
+      
+      const val = await showDialog('Assign to Batch', '', html, [{ label: 'Cancel', class: 'outline' }, { label: 'Update Batch', class: 'primary', value: 'update' }]);
+      if (val === 'update') {
+        const batch = $('batchSelect').value || null; // Sends null to Firebase to remove it if empty
+        try { await updateRecord('users', id, { batch }); showSnack('User batch updated'); }
+        catch (e) { showSnack('Error updating batch'); }
+      }
+    };
+  }
+
+  /* --- 9. ADMIN: EDUCATORS --- */
+  function renderEducators(el) {
+    const usersArr = toArray(allUsers);
+    const batchesArr = toArray(allBatches);
+    const educators = usersArr.filter(u => u.role === 'educator');
+    
+    let html = getBanner('Educators', 'Manage educators and their batch assignments');
+    
+    if (educators.length === 0) {
+      html += `<div class="empty-state"><span class="material-symbols-outlined mat-icon">school</span><h4>No educators yet</h4></div>`;
+    } else {
+      html += `<div class="md-grid">`;
+      educators.forEach(e => {
+        const assignedBatches = (e.batches || []).map(id => batchesArr.find(b => b.id === id)?.name || id).join(', ') || 'No batches assigned';
+        html += `<div class="md-card">
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div class="avatar-circle" style="background:${avatarColor(e.name)};">${getAvatar(e.name)}</div>
+            <div>
+              <strong style="font-size:18px; font-family:'Google Sans', sans-serif;">${e.name}</strong> 
+              <div style="color:var(--md-sys-color-on-surface-variant); font-size:13px; margin-top:2px;">${e.enroll}</div>
+            </div>
+          </div>
+          <div style="margin-top:20px; font-size:14px;"><strong>Assigned Batches:</strong><br><div style="margin-top:8px; color:var(--md-sys-color-primary);">${assignedBatches}</div></div>
+          <div class="card-actions">
+            <button class="btn-sm primary ripple" onclick="window._assignBatches('${e.id}')">Manage Batches</button>
+            <button class="btn-sm outline ripple" style="color:var(--md-sys-color-error); border-color:var(--md-sys-color-error);" onclick="window._removeEducator('${e.id}')">Revoke Role</button>
+          </div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    el.innerHTML = html;
+
+    window._assignBatches = async (id) => {
+      const user = allUsers[id];
+      if (!user) return showSnack('User not found');
+      const batchesArr = toArray(allBatches);
+      
+      let batchOpts = batchesArr.map(b => `
+        <label style="display:flex; align-items:center; padding:12px; border-radius:8px; border:1px solid var(--md-sys-color-outline-variant); margin-bottom:8px; cursor:pointer; transition:background 0.2s;">
+          <input type="checkbox" value="${b.id}" ${(user.batches||[]).includes(b.id) ? 'checked' : ''} style="margin-right:16px; width:18px; height:18px;" /> 
+          <span style="font-weight:500;">${b.name}</span>
+        </label>
+      `).join('');
+      
+      if(batchesArr.length === 0) batchOpts = `<div class="text-secondary">No batches exist. Create one first.</div>`;
+      
+      const html = `<div style="max-height:400px; overflow-y:auto; margin-bottom:12px; padding-right:8px;">${batchOpts}</div>`;
+      const val = await showDialog('Assign Batches', `Select batches for ${user.name}`, html, [{ label: 'Cancel', class: 'outline' }, { label: 'Save Assignments', class: 'primary', value: 'save' }]);
+      
+      if (val === 'save') {
+        const checks = document.querySelectorAll('#dialogBody input[type="checkbox"]');
+        const selected = []; checks.forEach(c => { if (c.checked) selected.push(c.value); });
+        try { await updateRecord('users', id, { batches: selected }); showSnack('Batches assigned successfully'); }
+        catch (e) { showSnack('Error saving batches'); }
+      }
+    };
+    window._removeEducator = async (id) => {
+      if (confirm('Are you sure you want to revoke educator access? (This will convert them to a student)')) {
+        try { await updateRecord('users', id, { role: 'student', batches: [] }); showSnack('Educator removed'); }
+        catch (e) { showSnack('Error removing educator'); }
+      }
+    };
+  }
+
+  /* --- 10. ADMIN: BATCHES --- */
+  function renderBatches(el) {
+    const batchesArr = toArray(allBatches);
+    let html = getBanner('Batches', 'Create and manage student batches') + `<button class="btn-primary ripple" style="width:auto; margin-bottom:24px;" onclick="window._newBatch()">+ Create New Batch</button>`;
+    
+    if (batchesArr.length === 0) {
+      html += `<div class="empty-state"><span class="material-symbols-outlined mat-icon">class</span><h4>No batches created</h4></div>`;
+    } else {
+      html += `<div class="md-grid">`;
+      batchesArr.forEach(b => {
+        const usersArr = toArray(allUsers);
+        const count = usersArr.filter(u => u.role === 'student' && u.batch === b.id).length;
+        html += `<div class="md-card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <strong style="font-family:'Google Sans', sans-serif; font-size:20px;">${b.name}</strong> 
+            <span class="chip primary">${count} Students</span>
+          </div>
+          <div class="card-actions" style="margin-top:32px;">
+            <button class="btn-sm outline ripple" onclick="window._viewBatchStudents('${b.id}')">View Students</button>
+            <button class="btn-sm outline ripple" onclick="window._editBatch('${b.id}')">Edit Name</button>
+            <button class="btn-sm danger ripple" onclick="window._deleteBatch('${b.id}')">Delete</button>
+          </div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    el.innerHTML = html;
+
+    window._newBatch = () => openBatchDialog(null);
+    window._editBatch = (id) => openBatchDialog(id);
+    window._deleteBatch = async (id) => {
+      if (!confirm('WARNING: Delete this batch completely? All students in this batch will become unassigned.')) return;
+      try {
+        const usersArr = toArray(allUsers);
+        // Unassign batch from all users safely
+        const updates = [];
+        for (const user of usersArr) { if (user.batch === id) updates.push(updateRecord('users', user.id, { batch: null })); }
+        await Promise.all(updates);
+        
+        await deleteRecord('batches', id); 
+        showSnack('Batch deleted');
+      } catch (e) { showSnack('Error deleting batch'); }
+    };
+    window._viewBatchStudents = async (id) => {
+      const usersArr = toArray(allUsers);
+      const students = usersArr.filter(u => u.role === 'student' && u.batch === id);
+      const batch = allBatches[id];
+      let html2 = '';
+      if (students.length === 0) {
+        html2 += `<div class="empty-state"><h4>No students assigned to this batch.</h4></div>`;
+      } else {
+        html2 += `<div style="max-height:400px; overflow-y:auto; padding-right:8px;">`;
+        html2 += students.map(s => `
+          <div style="display:flex; align-items:center; gap:16px; padding:12px; border:1px solid var(--md-sys-color-outline-variant); border-radius:12px; margin-bottom:8px;">
+            <div class="avatar-circle small" style="background:${avatarColor(s.name)}">${getAvatar(s.name)}</div>
+            <div><strong style="font-size:15px;">${s.name}</strong> <div style="font-size:12px; color:var(--md-sys-color-on-surface-variant);">${s.enroll}</div></div>
+          </div>
+        `).join('');
+        html2 += `</div>`;
+      }
+      await showDialog('Batch Roster', `Students currently in ${batch?.name}`, html2, [{ label: 'Close', class: 'outline' }]);
+    };
+  }
+
+  async function openBatchDialog(id) {
+    const batchesArr = toArray(allBatches);
+    const existing = id ? batchesArr.find(b => b.id === id) : null;
+    const html = `<div class="md-field"><label>Batch Name</label><input type="text" id="batchName" value="${existing?.name||''}" placeholder="e.g. JEE 2027-A" /></div>`;
+    const val = await showDialog(id ? 'Edit Batch' : 'Create New Batch', '', html, [{ label: 'Cancel', class: 'outline' }, { label: 'Save Batch', class: 'primary', value: 'save' }]);
+    if (val === 'save') {
+      const name = $('batchName').value.trim();
+      if (!name) return showSnack('Please enter a batch name');
+      try {
+        if (existing) await updateRecord('batches', id, { name });
+        else await createRecord('batches', { name });
+        showSnack('Batch saved successfully');
+      } catch (e) { showSnack('Error saving batch'); }
+    }
+  }
+
+  /* --- 11. ADMIN: MANAGEMENT --- */
+  function renderManagement(el) {
+    const usersArr = toArray(allUsers); const batchesArr = toArray(allBatches); const schedulesArr = toArray(allSchedules);
+    const broadcastsArr = toArray(allBroadcasts); const doubtsArr = toArray(allDoubts); const assignmentsArr = toArray(allAssignments);
+    
+    let html = getBanner('System Management', 'Configure application settings') + `
+      <div class="md-card"><div class="card-title">System Overview Database</div>
+        <div class="md-grid-3" style="margin-top:24px;">
+          <div style="background:var(--md-sys-color-surface); padding:24px; border-radius:16px; text-align:center; border:1px solid var(--md-sys-color-outline-variant);">
+            <div style="font-size:36px; font-weight:400; color:var(--md-sys-color-primary); font-family:'Google Sans', sans-serif;">${usersArr.length}</div>
+            <div style="font-weight:600; margin-top:8px;">Users</div>
+          </div>
+          <div style="background:var(--md-sys-color-surface); padding:24px; border-radius:16px; text-align:center; border:1px solid var(--md-sys-color-outline-variant);">
+            <div style="font-size:36px; font-weight:400; color:var(--md-sys-color-primary); font-family:'Google Sans', sans-serif;">${batchesArr.length}</div>
+            <div style="font-weight:600; margin-top:8px;">Batches</div>
+          </div>
+          <div style="background:var(--md-sys-color-surface); padding:24px; border-radius:16px; text-align:center; border:1px solid var(--md-sys-color-outline-variant);">
+            <div style="font-size:36px; font-weight:400; color:var(--md-sys-color-primary); font-family:'Google Sans', sans-serif;">${schedulesArr.length}</div>
+            <div style="font-weight:600; margin-top:8px;">Schedules</div>
+          </div>
+          <div style="background:var(--md-sys-color-surface); padding:24px; border-radius:16px; text-align:center; border:1px solid var(--md-sys-color-outline-variant);">
+            <div style="font-size:36px; font-weight:400; color:var(--md-sys-color-primary); font-family:'Google Sans', sans-serif;">${doubtsArr.length}</div>
+            <div style="font-weight:600; margin-top:8px;">Doubts Logged</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="md-card"><div class="card-title">Quick Actions</div>
+        <div class="card-actions">
+          <button class="btn-sm primary ripple" onclick="window._manageSchedules()">Manage Timetables / Schedules</button>
+          <button class="btn-sm danger ripple" onclick="window._clearNotifications()">Clear All Global Notifications</button>
+        </div>
+      </div>
+    `;
+    el.innerHTML = html;
+
+    window._manageSchedules = async () => {
+      const schedulesArr = toArray(allSchedules); const batchesArr = toArray(allBatches);
+      let html2 = `<button class="btn-primary ripple" style="margin-bottom:24px; width:auto;" onclick="window._newSchedule()">+ Add New Schedule</button>`;
+      
+      if (schedulesArr.length === 0) { 
+        html2 += `<div class="empty-state"><h4>No schedules active</h4></div>`; 
+      }
+      else {
+        html2 += `<div style="max-height:400px; overflow-y:auto; padding-right:8px;">`;
+        schedulesArr.forEach(s => {
+          const batch = batchesArr.find(b => b.id === s.batch);
+          html2 += `<div class="md-card" style="box-shadow:none; border:1px solid var(--md-sys-color-outline-variant); padding:16px;">
+            <strong style="font-size:16px;">${s.subject||'Untitled'}</strong> · <span class="chip">${batch?.name||'Unknown Batch'}</span>
+            <div style="font-size:14px; color:var(--md-sys-color-on-surface-variant); margin-top:12px;">
+              <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">event</span> ${s.day||''} &nbsp;&nbsp;
+              <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">schedule</span> ${s.startTime||''}-${s.endTime||''} &nbsp;&nbsp;
+              ${s.room ? `<span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">meeting_room</span> ${s.room}` : ''}
+            </div>
+            <div class="card-actions" style="margin-top:16px;">
+              <button class="btn-sm outline ripple" onclick="window._editSchedule('${s.id}')">Edit</button>
+              <button class="btn-sm danger ripple" onclick="window._deleteSchedule('${s.id}')">Delete</button>
+            </div>
+          </div>`;
+        });
+        html2 += `</div>`;
+      }
+      await showDialog('Manage Timetables', '', html2, [{ label: 'Close', class: 'outline' }]);
+      window._newSchedule = () => openScheduleDialog(null);
+      window._editSchedule = (id) => openScheduleDialog(id);
+      window._deleteSchedule = async (id) => {
+        if (confirm('Delete this schedule?')) {
+          try { await deleteRecord('schedules', id); showSnack('Schedule deleted'); closeDialog(); } 
+          catch (e) { showSnack('Error deleting schedule'); }
+        }
+      };
+    };
+    
+    window._clearNotifications = async () => {
+      if(!confirm('Are you absolutely sure you want to clear all notifications system-wide?')) return;
+      const notifs = toArray(allNotifications);
+      for (const n of notifs) { await deleteRecord('notifications', n.id); }
+      showSnack('All notifications cleared');
+    };
+  }
+
+  async function openScheduleDialog(id) {
+    const schedulesArr = toArray(allSchedules); const batchesArr = toArray(allBatches);
+    const existing = id ? schedulesArr.find(s => s.id === id) : null;
+    
+    const batchOpts = batchesArr.map(b => `<option value="${b.id}" ${existing?.batch===b.id?'selected':''}>${b.name}</option>`).join('');
+    if(batchesArr.length === 0) return showSnack('You must create a batch before creating a schedule.');
+    
+    const html = `
+      <div class="md-field"><label>Batch</label><select id="schBatch">${batchOpts}</select></div>
+      <div class="md-field"><label>Subject</label><input type="text" id="schSubject" value="${existing?.subject||''}" placeholder="e.g. Chemistry" /></div>
+      <div class="md-field"><label>Educator Name</label><input type="text" id="schEducator" value="${existing?.educatorName||''}" placeholder="e.g. Mr. Sharma" /></div>
+      <div class="md-field"><label>Day of Week</label><input type="text" id="schDay" value="${existing?.day||''}" placeholder="e.g. Monday" /></div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div class="md-field"><label>Start Time</label><input type="text" id="schStart" value="${existing?.startTime||''}" placeholder="09:00 AM" /></div>
+        <div class="md-field"><label>End Time</label><input type="text" id="schEnd" value="${existing?.endTime||''}" placeholder="10:30 AM" /></div>
+      </div>
+      <div class="md-field"><label>Room / Link (optional)</label><input type="text" id="schRoom" value="${existing?.room||''}" placeholder="e.g. Room 101 or Zoom Link" /></div>
+    `;
+    const val = await showDialog(id ? 'Edit Schedule' : 'Create Schedule', '', html, [{ label: 'Cancel', class: 'outline' }, { label: 'Save Schedule', class: 'primary', value: 'save' }]);
+    
+    if (val === 'save') {
+      const data = { 
+        batch:$('schBatch').value, subject:$('schSubject').value.trim(), 
+        educatorName:$('schEducator').value.trim(), day:$('schDay').value.trim(), 
+        startTime:$('schStart').value.trim(), endTime:$('schEnd').value.trim(), room:$('schRoom').value.trim() 
+      };
+      if (!data.batch || !data.subject || !data.day) return showSnack('Please fill required fields (Subject, Day)');
+      try {
+        if (existing) await updateRecord('schedules', id, data);
+        else await createRecord('schedules', data);
+        showSnack('Schedule saved successfully'); closeDialog();
+      } catch (e) { showSnack('Error saving schedule'); }
+    }
+  }
+
+  /* --- 12. AI & CREDITS --- */
+  function renderAI(el) {
+    el.innerHTML = getBanner('CMG AI', 'Your Personal Learning Assistant') + `
+      <div class="md-card" style="text-align:center; padding:80px 20px; position:relative; overflow:hidden;">
+        <div style="width:120px; height:120px; background:var(--md-sys-color-primary-container); border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center; box-shadow:0 0 40px rgba(11,87,208,0.2);">
+          <span class="material-symbols-outlined" style="font-size:64px; color:var(--md-sys-color-primary);">auto_awesome</span>
+        </div>
+        <h2 style="margin-top:32px; font-family:'Google Sans',sans-serif; font-size:32px; font-weight:400;">Coming Soon</h2>
+        <p style="color:var(--md-sys-color-on-surface-variant); margin-top:12px; font-size:16px;">CMG AI is currently under development.<br>Stay tuned for intelligent learning assistance.</p>
+        <div style="margin-top:24px;"><span class="chip primary">🚀 Launching in upcoming updates</span></div>
+      </div>
+    `;
+  }
+  function renderCredits(el) {
+    el.innerHTML = getBanner('Credits & About', 'CMG Workspace Application') + `
+      <div class="md-card" style="text-align:center; padding:48px 20px;">
+        <img src="https://i.ibb.co/RkfvxS4B/Chat-GPT-Image-Jul-18-2026-11-06-05-PM-1.jpg" style="width:100px;height:100px;border-radius:32px;object-fit:cover;margin-bottom:24px; box-shadow:var(--md-sys-elevation-2);" />
+        <h2 style="font-family:'Google Sans',sans-serif; font-size:28px;">CMG Coaching Workspace</h2>
+        <div class="chip" style="margin-top:12px; background:var(--md-sys-color-surface); border:1px solid var(--md-sys-color-outline-variant);">Version 3.0 (Material Design)</div>
+        
+        <div style="margin-top:40px; border-top:1px solid var(--md-sys-color-outline-variant); padding-top:32px; text-align:left; max-width:340px; margin-left:auto; margin-right:auto;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+            <strong style="color:var(--md-sys-color-on-surface-variant);">Developer:</strong> 
+            <span style="font-weight:600;">Samarth Dwivedi</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+            <strong style="color:var(--md-sys-color-on-surface-variant);">Director:</strong> 
+            <span style="font-weight:600;">Amol Ghosh</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+            <strong style="color:var(--md-sys-color-on-surface-variant);">Producer:</strong> 
+            <span style="font-weight:600;">Amol Ghosh</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+            <strong style="color:var(--md-sys-color-on-surface-variant);">Motivator:</strong> 
+            <span style="font-weight:600;">Amol Ghosh</span>
+          </div>
+        </div>
+        <div style="margin-top:40px; font-size:12px; color:var(--md-sys-color-on-surface-variant);">© 2026 CMG Coaching. All rights reserved.</div>
+      </div>
+    `;
+  }
+
+  // --- Auth Handlers ---
+  $('loginForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const en = $('loginEnroll').value.trim(), pass = $('loginPassword').value.trim();
+    if (!en || !pass) return showSnack('Please fill all fields');
+    
+    $('loginBtn').textContent = 'Signing in...';
+    $('loginBtn').disabled = true;
+    
+    try {
+      const users = await get(ref(db, 'users')).then(s => s.val() || {});
+      let valid = false;
+      for (const [id, u] of Object.entries(users)) {
+        if (u.enroll === en && u.password === pass) {
+          if (u.disabled) { showSnack('Account disabled by Administrator'); break; }
+          
+          currentUser = {id, ...u}; currentRole = u.role.toLowerCase();
+          
+          // Switch UI BEFORE loading data to prevent errors
+          $('login-page').classList.remove('active'); 
+          $('app').classList.add('active');
+          $('headerAvatar').textContent = getAvatar(u.name);
+          $('headerAvatar').style.background = avatarColor(u.name);
+          $('navUserName').textContent = u.name; 
+          $('navUserEnroll').textContent = u.enroll;
+          
+          // Attach listeners securely now that currentUser exists
+          loadAllData(); 
+          
+          navigateTo('dashboard'); 
+          showSnack(`Welcome back, ${u.name.split(' ')[0]}!`);
+          valid = true; break;
+        }
+      }
+      if (!valid && !currentUser) showSnack('Invalid enrollment number or password');
+    } catch (err) {
+      showSnack('Login failed: Check connection');
+    } finally {
+      $('loginBtn').textContent = 'Sign In';
+      $('loginBtn').disabled = false;
+    }
+  };
+
+  $('signupForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const name = $('signupName').value.trim();
+    const enroll = $('signupEnroll').value.trim();
+    const arn = $('signupArn').value.trim();
+    const password = $('signupPassword').value.trim();
+    const confirm = $('signupConfirm').value.trim();
+
+    if (!name || !enroll || !arn || !password || !confirm) return showSnack('Please fill all fields');
+    if (arn.length !== 4 || !/^\d{4}$/.test(arn)) return showSnack('ARN must be exactly 4 digits');
+    if (password.length < 6) return showSnack('Password must be at least 6 characters');
+    if (password !== confirm) return showSnack('Passwords do not match');
+
+    $('signupBtn').textContent = 'Creating Account...';
+    $('signupBtn').disabled = true;
+    
+    try {
+      const users = await get(ref(db, 'users')).then(s => s.val() || {});
+      for (const [id, u] of Object.entries(users)) {
+        if (u.enroll === enroll) { throw new Error('Enrollment number already registered'); }
+      }
+      
+      const userData = { name, enroll, arn, password, role: 'student', batch: null, disabled: false, batches: [], subjects: [], createdAt: new Date().toISOString() };
+      const newRef = push(ref(db, 'users'));
+      await set(newRef, userData);
+      
+      currentUser = { id: newRef.key, ...userData };
+      currentRole = 'student';
+      
+      $('login-page').classList.remove('active'); $('app').classList.add('active');
+      $('headerAvatar').textContent = getAvatar(name);
+      $('headerAvatar').style.background = avatarColor(name);
+      $('navUserName').textContent = name; $('navUserEnroll').textContent = enroll;
+      
+      loadAllData();
+      navigateTo('dashboard');
+      showSnack('Account created successfully!');
+    } catch (err) {
+      showSnack(err.message || 'Signup failed');
+    } finally {
+      $('signupBtn').textContent = 'Create Account';
+      $('signupBtn').disabled = false;
+    }
+  };
+
+  $('switchToSignup').onclick = () => { $('loginForm').style.display='none'; $('signupForm').style.display='block'; };
+  $('switchToLogin').onclick = () => { $('loginForm').style.display='block'; $('signupForm').style.display='none'; };
+  
+  // FIXED: Both menu toggles control the slider now
+  const toggleDrawer = () => $('navDrawer').classList.toggle('open');
+  $('menuToggle').onclick = toggleDrawer;
+  $('drawerMenuToggle').onclick = toggleDrawer;
+
+  // --- Startup & Splash ---
+  setTimeout(async () => {
+    // Generate floating books background dynamically
+    const bg = $('loginBg');
+    const books = ['📚', '📖', '📕', '📗', '📘', '📙', '📓', '📔', '✏️', '📝'];
+    for (let i = 0; i < 20; i++) {
+      const el = document.createElement('span');
+      el.className = 'book'; el.textContent = books[i % books.length];
+      el.style.left = Math.random() * 95 + '%'; el.style.top = Math.random() * 95 + '%';
+      el.style.fontSize = (24 + Math.random() * 32) + 'px';
+      el.style.animationDuration = (15 + Math.random() * 20) + 's';
+      el.style.animationDelay = (Math.random() * 10) + 's';
+      bg.appendChild(el);
+    }
+
+    // Auto-create Admin001 if database is completely empty
+    if (firebaseConnected) {
+      try {
+        const users = await get(ref(db, 'users')).then(s => s.val());
+        if (!users || Object.keys(users).length === 0) {
+          await push(ref(db, 'users'), { name: 'Admin', enroll: 'ADMIN001', arn: '0000', password: 'admin123', role: 'admin', batch: null, disabled: false, batches: [], subjects: [], createdAt: new Date().toISOString() });
+          console.log('📌 Default admin created: ADMIN001 / admin123');
+        }
+      } catch (e) { console.warn('Could not verify admin:', e.message); }
+    }
+
+    $('splash').classList.add('hide'); 
+    $('login-page').classList.add('active');
+    
+    // We intentionally DO NOT call loadAllData() here anymore to prevent null crashes.
+    // It gets called only AFTER a successful login.
+    
+    const banner = $('fbStatusBanner');
+    if (!firebaseConnected) {
+      banner.style.display = 'block';
+      banner.textContent = '❌ Firebase connection failed. Please check internet or config.';
+    }
+  }, 1800);
+</script>
+</body>
+</html>
