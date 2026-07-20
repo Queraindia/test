@@ -53,7 +53,6 @@
       --font-family: 'Inter', 'Google Sans', sans-serif;
       --nav-width: 280px;
       --header-height: 64px;
-      --bottom-nav-height: 80px;
     }
     
     [data-theme="dark"] {
@@ -194,13 +193,18 @@
       position: fixed; top: 0; left: 0; bottom: 0;
       width: var(--nav-width);
       background: var(--md-sys-color-surface);
-      overflow-y: auto; z-index: 50;
+      overflow-y: auto; z-index: 60;
       transform: translateX(-100%);
       transition: transform var(--md-transition-standard);
       padding: 24px 12px;
       display: flex; flex-direction: column;
     }
     .nav-drawer.open { transform: translateX(0); box-shadow: var(--md-sys-elevation-2); }
+    .drawer-backdrop {
+      position: fixed; inset: 0; z-index: 55; background: rgba(0,0,0,0.28);
+      opacity: 0; pointer-events: none; transition: opacity var(--md-transition-standard);
+    }
+    .drawer-backdrop.active { opacity: 1; pointer-events: auto; }
     @media (min-width: 768px) {
       .nav-drawer { transform: translateX(0); box-shadow: none; }
     }
@@ -245,6 +249,16 @@
     }
     .nav-item .mat-icon { font-size: 24px; font-variation-settings: 'FILL' 0; transition: font-variation-settings 0.2s; }
     .nav-item.active .mat-icon { font-variation-settings: 'FILL' 1; color: var(--md-sys-color-primary); }
+
+    button, a, .nav-item, .md-card, input, select, textarea {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+    }
+    button, .nav-item, .btn-sm, .btn-primary, .menu-btn, .avatar-btn, .drawer-menu-btn {
+      position: relative;
+      z-index: 2;
+    }
     
     .main-content {
       flex: 1; display: flex; flex-direction: column;
@@ -283,28 +297,6 @@
     .page-title-banner { margin-bottom: 28px; }
     .page-title-banner h2 { font-size: 32px; font-family: 'Google Sans', sans-serif; font-weight: 400; color: var(--md-sys-color-on-surface); }
     .page-title-banner p { color: var(--md-sys-color-on-surface-variant); font-size: 15px; margin-top: 6px; }
-
-    /* ===== M3 BOTTOM NAV ===== */
-    .bottom-nav {
-      display: none; position: fixed; bottom: 0; left: 0; right: 0;
-      height: var(--bottom-nav-height); background: var(--md-sys-color-surface-container);
-      z-index: 40; justify-content: space-around; align-items: center;
-      border-top: 1px solid var(--md-sys-color-outline-variant);
-    }
-    .bnav-item {
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
-      border: none; background: none; color: var(--md-sys-color-on-surface-variant);
-      font-size: 12px; font-weight: 500; cursor: pointer; padding: 8px 12px;
-      position: relative; overflow: hidden;
-    }
-    .bnav-item .icon-wrap {
-      width: 64px; height: 32px; border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s;
-    }
-    .bnav-item.active { color: var(--md-sys-color-on-surface); font-weight: 600; }
-    .bnav-item.active .icon-wrap { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
-    .bnav-item.active .mat-icon { font-variation-settings: 'FILL' 1; }
 
     /* ===== CARDS (Google Material 3) ===== */
     .md-card {
@@ -406,6 +398,26 @@
     }
     .snackbar.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+    .notification-panel {
+      position: fixed; top: 12px; right: 12px; width: min(360px, calc(100vw - 24px));
+      max-height: calc(100vh - 24px); overflow: hidden; border-radius: 24px;
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      box-shadow: var(--md-sys-elevation-3);
+      z-index: 320; transform: translateY(-20px) scale(0.98); opacity: 0; pointer-events: none;
+      transition: transform 0.28s cubic-bezier(0.2,0,0,1), opacity 0.28s cubic-bezier(0.2,0,0,1);
+    }
+    .notification-panel.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
+    .notification-panel .panel-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--md-sys-color-outline-variant); }
+    .notification-panel .panel-header h3 { font-size:18px; font-family:'Google Sans', sans-serif; font-weight:500; }
+    .notification-panel .panel-body { max-height: min(520px, calc(100vh - 140px)); overflow-y:auto; padding:12px 12px 16px; }
+    .notification-item { padding:12px; border-radius:16px; margin-bottom:8px; border:1px solid var(--md-sys-color-outline-variant); background: var(--md-sys-color-surface); animation: notifSlideIn 0.25s ease both; }
+    .notification-item.unread { border-color: var(--md-sys-color-primary); background: var(--md-sys-color-primary-container); }
+    .notification-item .notif-title { font-weight:600; font-size:14px; margin-bottom:4px; }
+    .notification-item .notif-meta { font-size:12px; color:var(--md-sys-color-on-surface-variant); margin-bottom:6px; }
+    .notification-item .notif-text { font-size:13px; line-height:1.45; color:var(--md-sys-color-on-surface); }
+    @keyframes notifSlideIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
     /* RIPPLE EFFECT */
     .ripple { position: relative; overflow: hidden; }
     .ripple-effect {
@@ -423,7 +435,6 @@
     
     @media (max-width: 767px) {
       .app-header { display: flex; margin-top:0; border-bottom:1px solid var(--md-sys-color-outline-variant); }
-      .bottom-nav { display: flex; }
       .main-content { background: var(--md-sys-color-surface); margin-left: 0 !important; }
       .page-content { padding: 16px 16px 100px; }
       .md-card { padding: 20px; border-radius: 20px; }
@@ -482,6 +493,7 @@
 
 <!-- APP -->
 <div id="app">
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
   <nav class="nav-drawer" id="navDrawer">
     <div class="brand">
       <div class="brand-info">
@@ -520,8 +532,6 @@
     </header>
     <div class="page-content" id="pageContent"></div>
   </div>
-
-  <nav class="bottom-nav" id="bottomNav"></nav>
 </div>
 
 <!-- DIALOG -->
@@ -540,6 +550,15 @@
   <span class="material-symbols-outlined" id="snackClose" style="cursor:pointer; font-size:20px;">close</span>
 </div>
 
+<!-- NOTIFICATION PANEL -->
+<div class="notification-panel" id="notificationPanel">
+  <div class="panel-header">
+    <h3>Notifications</h3>
+    <button class="btn-sm outline ripple" id="markAllReadBtn" style="padding:6px 12px; font-size:13px;">Mark all read</button>
+  </div>
+  <div class="panel-body" id="notificationList"></div>
+</div>
+
 <script type="module">
   import { initializeApp } from 'firebase/app';
   import { getDatabase, ref, set, get, push, update, remove, onValue } from 'firebase/database';
@@ -553,6 +572,7 @@
   };
 
   let app, db, firebaseConnected = false;
+  let notificationPanelOpen = false;
   try {
     app = initializeApp(firebaseConfig);
     db = getDatabase(app);
@@ -591,6 +611,11 @@
 
   // --- Ripple Effect ---
   document.addEventListener('click', function(e) {
+    const interactive = e.target.closest('button, a, .nav-item, .md-card, input, select, textarea');
+    if (window.innerWidth < 768 && interactive && $('navDrawer')?.classList.contains('open')) {
+      e.stopPropagation();
+    }
+
     const target = e.target.closest('.ripple');
     if (!target) return;
     const rect = target.getBoundingClientRect();
@@ -613,6 +638,75 @@
     snackTimer = setTimeout(() => $('snackbar').classList.remove('show'), duration);
   }
   $('snackClose').onclick = () => $('snackbar').classList.remove('show');
+
+  async function saveNotification(payload, recipientIds = []) {
+    if (!currentUser) return;
+    const recipients = recipientIds.length
+      ? recipientIds
+      : toArray(allUsers).map(u => u.id).filter(id => id !== currentUser.id);
+
+    const notifBase = {
+      ...payload,
+      createdAt: new Date().toISOString(),
+      read: false
+    };
+
+    try {
+      await Promise.all(recipients.map(userId => createRecord('notifications', { ...notifBase, userId })));
+    } catch (e) {
+      console.warn('Notification save failed', e);
+    }
+  }
+
+  function getUnreadNotifications() {
+    return toArray(allNotifications).filter(n => String(n.userId) === String(currentUser?.id) && !n.read);
+  }
+
+  async function markAllNotificationsRead() {
+    const unread = getUnreadNotifications();
+    if (!unread.length) return;
+    await Promise.all(unread.map(n => updateRecord('notifications', n.id, { read: true })));
+    renderNotifications();
+  }
+
+  function toggleNotificationsPanel(force) {
+    const panel = $('notificationPanel');
+    const next = typeof force === 'boolean' ? force : !notificationPanelOpen;
+    notificationPanelOpen = next;
+    panel.classList.toggle('open', next);
+    if (next) renderNotifications();
+  }
+
+  function renderNotifications() {
+    const list = $('notificationList');
+    const notifs = toArray(allNotifications)
+      .filter(n => String(n.userId) === String(currentUser?.id))
+      .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+
+    if (!notifs.length) {
+      list.innerHTML = `<div class="empty-state" style="padding:24px 8px;"><span class="material-symbols-outlined mat-icon">notifications</span><h4>No notifications yet</h4></div>`;
+      return;
+    }
+
+    list.innerHTML = notifs.map((n) => `
+      <div class="notification-item ${n.read ? '' : 'unread'}" data-id="${n.id}">
+        <div class="notif-title">${n.title || 'Update'}</div>
+        <div class="notif-meta">${n.meta || ''}</div>
+        <div class="notif-text">${n.message || ''}</div>
+      </div>
+    `).join('');
+
+    list.querySelectorAll('.notification-item').forEach(item => {
+      item.onclick = async () => {
+        const id = item.getAttribute('data-id');
+        const notif = notifs.find(n => n.id === id);
+        if (notif && !notif.read) {
+          await updateRecord('notifications', id, { read: true });
+          renderNotifications();
+        }
+      };
+    });
+  }
 
   function showDialog(title, sub, bodyHTML, actions) {
     return new Promise((resolve) => {
@@ -726,7 +820,7 @@
 
   function renderNav() {
     const items = navConfig[currentRole] || [];
-    $('navItems').innerHTML = ''; $('bottomNav').innerHTML = '';
+    $('navItems').innerHTML = '';
     items.forEach(it => {
       const label = it.id.charAt(0).toUpperCase() + it.id.slice(1);
       
@@ -735,12 +829,6 @@
       div.innerHTML = `<span class="material-symbols-outlined mat-icon">${it.icon}</span>${label}`;
       div.onclick = () => navigateTo(it.id);
       $('navItems').appendChild(div);
-
-      const bDiv = document.createElement('button');
-      bDiv.className = `bnav-item ripple ${currentPage === it.id ? 'active' : ''}`;
-      bDiv.innerHTML = `<div class="icon-wrap"><span class="material-symbols-outlined mat-icon">${it.icon}</span></div><span>${label}</span>`;
-      bDiv.onclick = () => navigateTo(it.id);
-      $('bottomNav').appendChild(bDiv);
     });
 
     // Sidebar Extra Items
@@ -761,8 +849,8 @@
     currentPage = page; renderNav();
     const map = { dashboard: 'Dashboard', schedule: 'Schedule', broadcasts: 'Broadcasts', doubts: 'Doubts', assignments: 'Assignments', attendance: 'Attendance', profile: 'Profile', users: 'User Management', educators: 'Educators', batches: 'Batches', management: 'Management', ai: 'CMG AI', credits: 'Credits & About' };
     $('headerTitle').textContent = map[page] || page.charAt(0).toUpperCase() + page.slice(1);
+    setDrawerOpen(false);
     renderPage(page);
-    if (window.innerWidth < 768) $('navDrawer').classList.remove('open');
   }
 
   function getBanner(title, sub) {
@@ -976,7 +1064,17 @@
         catch (e) { return showSnack('Image upload failed'); }
       }
       
-      await createRecord('broadcasts', { educatorId: currentUser.id, educatorName: currentUser.name, target, message, imageUrl, role: currentRole });
+      const broadcastId = await createRecord('broadcasts', { educatorId: currentUser.id, educatorName: currentUser.name, target, message, imageUrl, role: currentRole });
+      const recipientIds = toArray(allUsers)
+        .filter(u => u.id !== currentUser.id && (target === 'all' || String(u.batch) === String(target)))
+        .map(u => u.id);
+      await saveNotification({
+        title: 'New broadcast',
+        meta: currentRole === 'admin' ? 'Admin announcement' : 'Educator announcement',
+        message: `${currentUser.name}: ${message}`,
+        type: 'broadcast',
+        refId: broadcastId.id || broadcastId,
+      }, recipientIds);
       showSnack('Broadcast sent!');
     }
   }
@@ -1262,7 +1360,17 @@
       
       if (!batch || !title) return showSnack('Please select a batch and enter a title');
       
-      await createRecord('assignments', { batch, educatorId: currentUser.id, educatorName: currentUser.name, subject: subject || 'General', title, instructions: instructions || '', dueDate: dueDate || '', status: 'active' });
+      const assignmentId = await createRecord('assignments', { batch, educatorId: currentUser.id, educatorName: currentUser.name, subject: subject || 'General', title, instructions: instructions || '', dueDate: dueDate || '', status: 'active' });
+      const recipientIds = toArray(allUsers)
+        .filter(u => u.id !== currentUser.id && u.role === 'student' && String(u.batch) === String(batch))
+        .map(u => u.id);
+      await saveNotification({
+        title: 'New assignment',
+        meta: subject || 'Assignment',
+        message: `${title}${dueDate ? ` • Due ${dueDate}` : ''}`,
+        type: 'assignment',
+        refId: assignmentId.id || assignmentId,
+      }, recipientIds);
       showSnack('Assignment created and published!');
     }
   }
@@ -1790,7 +1898,19 @@
       if (!data.batch || !data.subject || !data.day) return showSnack('Please fill required fields (Subject, Day)');
       try {
         if (existing) await updateRecord('schedules', id, data);
-        else await createRecord('schedules', data);
+        else {
+          const scheduleId = await createRecord('schedules', data);
+          const recipientIds = toArray(allUsers)
+            .filter(u => u.id !== currentUser.id && String(u.batch) === String(data.batch))
+            .map(u => u.id);
+          await saveNotification({
+            title: 'New schedule',
+            meta: data.day,
+            message: `${data.subject} • ${data.startTime || '--'} - ${data.endTime || '--'}`,
+            type: 'schedule',
+            refId: scheduleId.id || scheduleId,
+          }, recipientIds);
+        }
         showSnack('Schedule saved successfully'); closeDialog();
       } catch (e) { showSnack('Error saving schedule'); }
     }
@@ -1930,10 +2050,40 @@
   $('switchToSignup').onclick = () => { $('loginForm').style.display='none'; $('signupForm').style.display='block'; };
   $('switchToLogin').onclick = () => { $('loginForm').style.display='block'; $('signupForm').style.display='none'; };
   
-  // FIXED: Both menu toggles control the slider now
-  const toggleDrawer = () => $('navDrawer').classList.toggle('open');
+  const isMobileView = () => window.innerWidth < 768;
+  const setDrawerOpen = (open) => {
+    const drawer = $('navDrawer');
+    const backdrop = $('drawerBackdrop');
+    drawer.classList.toggle('open', open);
+    if (backdrop) backdrop.classList.toggle('active', open && isMobileView());
+  };
+
+  const toggleDrawer = () => {
+    const isOpen = $('navDrawer').classList.contains('open');
+    setDrawerOpen(!isOpen);
+  };
+
   $('menuToggle').onclick = toggleDrawer;
   $('drawerMenuToggle').onclick = toggleDrawer;
+  $('headerAvatar').onclick = () => navigateTo('profile');
+  $('headerNotifBtn').onclick = () => toggleNotificationsPanel();
+  document.addEventListener('click', (e) => {
+    if (notificationPanelOpen && !e.target.closest('#notificationPanel') && !e.target.closest('#headerNotifBtn')) {
+      toggleNotificationsPanel(false);
+    }
+  });
+  $('drawerBackdrop').addEventListener('click', () => setDrawerOpen(false));
+  $('mainContent').addEventListener('click', (e) => {
+    if (!isMobileView()) return;
+    if (e.target.closest('#menuToggle, #drawerMenuToggle')) return;
+    if ($('navDrawer').classList.contains('open') && !$('navDrawer').contains(e.target)) {
+      setDrawerOpen(false);
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (!isMobileView()) setDrawerOpen(false);
+  });
 
   // --- Startup & Splash ---
   setTimeout(async () => {
