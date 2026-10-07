@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quera — Premium Audio</title>
+    <title>Quera Music</title>
     <meta name="theme-color" content="#070708">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1460,7 +1460,400 @@ input[type="range"]{touch-action:pan-x}
     .player-bar{bottom:calc(62px + var(--safe-bottom))}
 }
 
-    </style>
+
+/* ==================== FINAL MOBILE UI FIX ==================== */
+@media (max-width:700px){
+    html,body{width:100%;min-width:0;overflow:hidden;}
+    body{padding:0!important;}
+
+    .app-container{
+        height:100dvh!important;
+        min-height:0!important;
+        padding-top:calc(60px + var(--safe-top))!important;
+        padding-bottom:calc(148px + var(--safe-bottom))!important;
+    }
+
+    .mobile-topbar{
+        height:calc(60px + var(--safe-top))!important;
+        padding:var(--safe-top) 16px 0!important;
+        background:linear-gradient(180deg,#070708 0%,rgba(7,7,8,.96) 72%,transparent 100%)!important;
+    }
+    .mobile-brand-mark{width:36px;height:36px;flex:none;}
+    .mobile-brand strong{font-size:18px;}
+    .mobile-icon-btn{width:40px;height:40px;flex:none;}
+
+    .main-view{
+        width:100%!important;
+        height:100%!important;
+        padding:0 16px 28px!important;
+        overflow-x:hidden!important;
+        overflow-y:auto!important;
+        -webkit-overflow-scrolling:touch;
+    }
+
+    .now-playing-hero{
+        width:100%;
+        padding:18px 0 26px!important;
+        gap:18px!important;
+    }
+    .hero-art-wrap{width:100%;display:flex;justify-content:center;}
+    .hero-art{
+        width:min(82vw,340px)!important;
+        height:min(82vw,340px)!important;
+        max-width:340px;
+        max-height:340px;
+        border-radius:16px!important;
+    }
+    .hero-info{width:100%;padding:0!important;}
+    .hero-title{
+        width:100%;
+        font-size:30px!important;
+        line-height:1.08!important;
+        letter-spacing:-1.2px!important;
+        white-space:normal!important;
+        overflow:visible!important;
+    }
+    .hero-artist{font-size:14px!important;}
+
+    .dsp-section{padding:4px 0 30px!important;}
+    .dsp-grid{
+        display:grid!important;
+        grid-template-columns:1fr 1fr!important;
+        gap:10px!important;
+        overflow:visible!important;
+        margin:0!important;
+        padding:0!important;
+    }
+    .dsp-card{
+        min-width:0!important;
+        width:100%!important;
+        min-height:126px!important;
+        padding:14px!important;
+        scroll-snap-align:none!important;
+    }
+    .dsp-desc{line-height:1.4!important;}
+
+    /* Clean mobile player: artwork + info | prev/play/next */
+    .player-bar{
+        left:10px!important;
+        right:10px!important;
+        bottom:calc(78px + var(--safe-bottom))!important;
+        width:auto!important;
+        height:78px!important;
+        min-height:78px!important;
+        padding:8px 10px 9px!important;
+        display:grid!important;
+        grid-template-columns:minmax(0,1fr) auto!important;
+        grid-template-rows:1fr 3px!important;
+        gap:0 8px!important;
+        border-radius:17px!important;
+        overflow:hidden!important;
+        z-index:300!important;
+    }
+
+    #visualizer-canvas{opacity:.10!important;}
+
+    .player-left{
+        grid-column:1!important;
+        grid-row:1!important;
+        width:auto!important;
+        min-width:0!important;
+        max-width:none!important;
+        display:flex!important;
+        align-items:center!important;
+        gap:9px!important;
+        overflow:hidden!important;
+    }
+    .player-art-mini{
+        width:52px!important;
+        height:52px!important;
+        flex:0 0 52px!important;
+        border-radius:9px!important;
+    }
+    .player-info-mini{
+        min-width:0!important;
+        max-width:100%!important;
+        overflow:hidden!important;
+    }
+    .player-info-mini .track-title{
+        font-size:12px!important;
+        line-height:1.25!important;
+    }
+    .player-info-mini .track-artist{font-size:10px!important;}
+    .time-display{display:none!important;}
+
+    .player-center{
+        grid-column:2!important;
+        grid-row:1!important;
+        width:auto!important;
+        max-width:none!important;
+        min-width:132px!important;
+        height:100%!important;
+        display:flex!important;
+        flex-direction:row!important;
+        align-items:center!important;
+        justify-content:flex-end!important;
+        gap:4px!important;
+    }
+    .player-controls{
+        width:auto!important;
+        display:flex!important;
+        align-items:center!important;
+        justify-content:flex-end!important;
+        gap:2px!important;
+    }
+    .player-center .btn-icon{
+        display:flex!important;
+        width:38px!important;
+        height:44px!important;
+        flex:0 0 38px!important;
+    }
+    .player-center .btn-icon .material-symbols-rounded{font-size:23px!important;}
+
+    /* Show only previous + play + next in mobile mini-player */
+    .player-center .btn-icon:nth-child(1),
+    .player-center .btn-icon:nth-child(5){display:none!important;}
+    .player-center .btn-icon:nth-child(2),
+    .player-center .btn-icon:nth-child(4){display:flex!important;}
+
+    .btn-play{
+        width:48px!important;
+        height:48px!important;
+        flex:0 0 48px!important;
+    }
+    .btn-play .material-symbols-rounded{font-size:28px!important;}
+
+    .player-center .progress-wrapper{
+        position:absolute!important;
+        left:10px!important;
+        right:10px!important;
+        bottom:2px!important;
+        width:auto!important;
+        height:3px!important;
+        margin:0!important;
+    }
+    .progress-bg{height:3px!important;}
+    .progress-fill::after{display:none!important;}
+
+    .player-right{display:none!important;}
+
+    .mobile-bottom-nav{
+        height:calc(72px + var(--safe-bottom))!important;
+        padding:7px 22px var(--safe-bottom)!important;
+        align-items:flex-start!important;
+        background:rgba(9,9,11,.98)!important;
+    }
+    .mobile-nav-item{
+        min-width:70px!important;
+        height:58px!important;
+        padding:5px 8px!important;
+        gap:3px!important;
+    }
+    .mobile-nav-item .material-symbols-rounded{font-size:23px!important;}
+    .mobile-add-orb{width:42px!important;height:42px!important;margin-top:-12px!important;}
+
+    /* Do not reserve a giant invisible block after music is loaded. */
+    .empty-state:not(.visible){display:none!important;}
+    .empty-state.visible{display:flex!important;}
+    .empty-state{min-height:calc(100dvh - 250px)!important;}
+
+    .settings-panel{
+        padding-top:calc(16px + var(--safe-top))!important;
+        padding-bottom:calc(20px + var(--safe-bottom))!important;
+        overflow-y:auto!important;
+    }
+}
+
+@media (max-width:390px){
+    .main-view{padding-left:13px!important;padding-right:13px!important;}
+    .hero-art{width:80vw!important;height:80vw!important;}
+    .hero-title{font-size:27px!important;}
+    .dsp-grid{grid-template-columns:1fr 1fr!important;gap:8px!important;}
+    .player-bar{left:7px!important;right:7px!important;}
+    .player-center{min-width:124px!important;}
+    .player-center .btn-icon{width:34px!important;flex-basis:34px!important;}
+    .btn-play{width:45px!important;height:45px!important;flex-basis:45px!important;}
+}
+
+@media (max-width:700px) and (orientation:landscape){
+    .app-container{padding-top:calc(54px + var(--safe-top))!important;padding-bottom:calc(124px + var(--safe-bottom))!important;}
+    .now-playing-hero{flex-direction:row!important;align-items:center!important;}
+    .hero-art{width:190px!important;height:190px!important;}
+    .hero-info{flex:1!important;}
+    .mobile-bottom-nav{height:calc(58px + var(--safe-bottom))!important;}
+    .player-bar{bottom:calc(64px + var(--safe-bottom))!important;}
+}
+
+    
+/* =========================================================
+   QUERA FINAL UI PASS — clean, blue-only, no overlaps
+   ========================================================= */
+:root{
+  --q-accent:#00d9ff;
+  --q-accent-2:#0aa7ff;
+  --q-blue-soft:rgba(0,217,255,.12);
+  --q-blue-line:rgba(0,217,255,.28);
+}
+
+html,body{scrollbar-width:none;}
+html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0}
+.main-view{scrollbar-width:none;}
+.main-view::-webkit-scrollbar{display:none;width:0;height:0}
+
+/* No purple/gold UI accents in the main player */
+.pro-badge{background:linear-gradient(135deg,#00d9ff,#078dff)!important;box-shadow:0 0 14px rgba(0,217,255,.35)!important}
+
+/* Settings: gear only controls open/close; no X */
+.close-settings{display:none!important}
+.settings-panel{overflow-y:auto;scrollbar-width:none}
+.settings-panel::-webkit-scrollbar{display:none}
+.settings-header{min-height:44px}
+.settings-header h2{font-size:22px}
+
+/* Desktop player — deliberate 3-zone music-player composition */
+.player-bar{
+  height:92px!important;
+  padding:0 22px!important;
+  display:grid!important;
+  grid-template-columns:minmax(230px,1fr) minmax(360px,1.25fr) minmax(220px,1fr)!important;
+  gap:24px!important;
+  align-items:center!important;
+  border-radius:20px!important;
+  background:rgba(13,14,18,.94)!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  box-shadow:0 22px 70px rgba(0,0,0,.72), inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+.player-left{width:auto!important;min-width:0!important;display:flex!important;align-items:center!important}
+.player-center{width:auto!important;max-width:none!important;display:flex!important;flex-direction:column!important;gap:7px!important;align-items:center!important;justify-content:center!important}
+.player-right{width:auto!important;min-width:0!important;display:flex!important;justify-content:flex-end!important;align-items:center!important;gap:18px!important}
+.player-controls{gap:13px!important;}
+.btn-icon{width:34px;height:34px;border-radius:50%}
+.btn-icon .material-symbols-rounded{font-size:21px}
+.btn-play{width:48px!important;height:48px!important;background:#f5f7f9!important;color:#050608!important;box-shadow:0 6px 22px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08)!important}
+.btn-play:hover{box-shadow:0 8px 28px rgba(0,217,255,.25)!important}
+.player-center .progress-wrapper{width:min(100%,520px)!important;height:16px}
+.progress-bg{height:3px!important;background:rgba(255,255,255,.12)!important}
+.progress-fill{background:linear-gradient(90deg,#00b9ff,#00e5ff)!important;box-shadow:0 0 10px rgba(0,217,255,.45)!important}
+.player-art-mini{width:56px!important;height:56px!important;border-radius:10px!important}
+.player-info-mini{gap:3px!important}
+.player-info-mini .track-title{font-size:13px!important}
+.player-info-mini .track-artist{font-size:11px!important}
+.control-group .material-symbols-rounded{color:#9ca2ad}
+input[type=range].control-slider{accent-color:#00d9ff}
+
+/* Mobile top area */
+.mobile-topbar{background:linear-gradient(180deg,#07090b 0%,rgba(7,9,11,.94) 70%,transparent 100%)!important}
+.mobile-brand strong{font-size:17px!important;letter-spacing:-.35px}
+.mobile-icon-btn{color:#f1f4f7!important;border-color:rgba(255,255,255,.11)!important;background:#121519!important}
+
+/* Add popup: anchored visually to the + button */
+.mobile-add-menu{
+  position:fixed;
+  left:50%;
+  bottom:calc(138px + var(--safe-bottom));
+  width:min(300px,calc(100vw - 28px));
+  transform:translate(-50%,14px) scale(.96);
+  transform-origin:bottom center;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  z-index:500;
+  padding:8px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:18px;
+  background:rgba(15,17,20,.98);
+  box-shadow:0 24px 70px rgba(0,0,0,.75),0 0 0 1px rgba(0,217,255,.05);
+  backdrop-filter:blur(28px) saturate(150%);
+  transition:opacity .22s ease,transform .22s cubic-bezier(.2,.8,.2,1),visibility .22s;
+}
+.mobile-add-menu.open{opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,0) scale(1)}
+.mobile-add-menu button{
+  width:100%;display:flex;align-items:center;gap:13px;padding:13px 12px;
+  border:0;background:transparent;color:#fff;text-align:left;border-radius:13px;cursor:pointer;
+}
+.mobile-add-menu button:hover,.mobile-add-menu button:active{background:rgba(0,217,255,.09)}
+.mobile-add-menu button>.material-symbols-rounded{
+  width:40px;height:40px;display:grid;place-items:center;border-radius:12px;
+  background:rgba(0,217,255,.10);color:var(--q-accent);font-size:21px;
+}
+.mobile-add-menu button span:last-child{display:flex;flex-direction:column;gap:3px}
+.mobile-add-menu strong{font-size:13px}.mobile-add-menu small{font-size:10px;color:#858b94}
+
+/* Mobile library drawer */
+.mobile-library{
+  position:fixed;inset:0;z-index:450;
+  background:#080a0d;
+  padding:calc(18px + var(--safe-top)) 14px calc(90px + var(--safe-bottom));
+  transform:translateY(100%);opacity:0;visibility:hidden;pointer-events:none;
+  transition:transform .34s cubic-bezier(.2,.8,.2,1),opacity .2s ease,visibility .34s;
+}
+.mobile-library.open{transform:translateY(0);opacity:1;visibility:visible;pointer-events:auto}
+.mobile-library-header{display:flex;align-items:center;justify-content:space-between;padding:0 4px 16px}
+.mobile-library-header h2{font-size:28px;letter-spacing:-1px;margin-top:3px}
+.eyebrow{font-size:9px;letter-spacing:1.7px;font-weight:800;color:var(--q-accent)}
+.mobile-library-list{height:calc(100% - 70px);overflow-y:auto;scrollbar-width:none}
+.mobile-library-list::-webkit-scrollbar{display:none}
+.mobile-track-item{min-height:62px!important;padding:8px!important;background:transparent!important;border-color:transparent!important}
+.mobile-track-item.active{background:rgba(0,217,255,.08)!important;border-color:rgba(0,217,255,.16)!important}
+.mobile-track-item .track-img-sm{width:48px;height:48px}
+.mobile-track-play{font-size:21px!important;color:#7e8791;margin-left:6px}
+
+/* Library empty state */
+.library-empty{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;color:#737a84}
+.library-empty .material-symbols-rounded{font-size:42px;color:rgba(0,217,255,.28);margin-bottom:5px}
+.library-empty strong{font-size:14px;color:#e8ebef}.library-empty span:last-child{font-size:11px}
+
+/* Settings library management */
+.library-management{margin-top:6px!important}
+.library-source-actions{display:flex}
+.library-danger-btn{width:100%;min-height:42px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:11px;border:1px solid rgba(0,217,255,.18);background:rgba(0,217,255,.07);color:#dffaff;font-size:11px;font-weight:700;cursor:pointer}
+.library-danger-btn:hover{background:rgba(0,217,255,.12);border-color:rgba(0,217,255,.3)}
+.library-danger-btn .material-symbols-rounded{font-size:18px;color:var(--q-accent)}
+.settings-library-list{display:flex;flex-direction:column;gap:7px;max-height:310px;overflow-y:auto;scrollbar-width:none}
+.settings-library-list::-webkit-scrollbar{display:none}
+.source-row,.source-song-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;border:1px solid rgba(255,255,255,.07);border-radius:11px;background:rgba(255,255,255,.025)}
+.source-row>div,.source-song-row>div{min-width:0;display:flex;flex-direction:column;gap:3px}
+.source-row strong,.source-song-row strong{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.source-row span,.source-song-row span{font-size:9.5px;color:#737b85}
+.source-row button,.source-song-row button{width:32px;height:32px;flex:0 0 32px;border:0;border-radius:9px;background:rgba(255,255,255,.05);color:#9ba2aa;display:grid;place-items:center;cursor:pointer}
+.source-row button:hover,.source-song-row button:hover{background:rgba(0,217,255,.12);color:var(--q-accent)}
+.source-row button .material-symbols-rounded,.source-song-row button .material-symbols-rounded{font-size:17px}
+.settings-subheading{font-size:9px;text-transform:uppercase;letter-spacing:1.3px;color:var(--q-accent);font-weight:800;padding:8px 2px 1px}
+.settings-library-empty{font-size:11px;color:#737a84;padding:14px 4px}
+
+/* Keep artwork clean — no dark rectangle behind it */
+.dynamic-bg{display:block}
+.hero-art-wrap{isolation:isolate;z-index:1}
+.hero-art-wrap::after{display:none!important}
+.hero-art{position:relative;z-index:2;object-fit:cover}
+
+@media (max-width:700px){
+  .dynamic-bg{display:none!important}
+  .main-view{scrollbar-width:none!important}
+  .main-view::-webkit-scrollbar{display:none!important}
+  .now-playing-hero{padding-top:12px!important}
+  .hero-art-wrap{width:100%!important;height:auto!important}
+  .hero-art{width:min(82vw,340px)!important;height:min(82vw,340px)!important;display:block!important}
+  .player-bar{
+    left:10px!important;right:10px!important;bottom:calc(78px + var(--safe-bottom))!important;
+    height:72px!important;min-height:72px!important;padding:7px 10px 8px!important;
+    grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:1fr 3px!important;
+    gap:0 8px!important;border-radius:16px!important;
+  }
+  .player-left{grid-column:1!important;grid-row:1!important}
+  .player-center{grid-column:2!important;grid-row:1!important;min-width:128px!important;height:100%!important;display:flex!important;flex-direction:row!important}
+  .player-center .player-controls{gap:0!important}
+  .player-center .btn-icon{width:35px!important;height:42px!important;display:flex!important;flex:0 0 35px!important}
+  .player-center .btn-icon:nth-child(1),.player-center .btn-icon:nth-child(5){display:none!important}
+  .player-center .btn-icon:nth-child(2),.player-center .btn-icon:nth-child(4){display:flex!important}
+  .btn-play{width:46px!important;height:46px!important;flex:0 0 46px!important}
+  .player-center .progress-wrapper{left:10px!important;right:10px!important;bottom:2px!important}
+  .mobile-bottom-nav{z-index:350!important}
+  .mobile-library{z-index:600!important}
+  .mobile-add-menu{z-index:700!important}
+  .settings-panel{z-index:800!important}
+}
+
+</style>
 </head>
 <body>
 <!-- DYNAMIC BACKGROUND LAYER -->
@@ -1485,7 +1878,7 @@ input[type="range"]{touch-action:pan-x}
             <div class="brand-info-wrapper">
                 <div class="brand-icon"><span class="material-symbols-rounded">graphic_eq</span></div>
                 <div class="brand-text">
-                    <h1>Quera</h1>
+                    <h1>Quera Music</h1>
                     <p>By SDTECHSOLUTIONS</p>
                 </div>
             </div>
@@ -1575,7 +1968,6 @@ input[type="range"]{touch-action:pan-x}
     <div class="settings-panel" id="settings-panel">
         <div class="settings-header">
             <h2>Preferences</h2>
-            <button class="close-settings" id="close-settings-btn" aria-label="Close preferences"><span class="material-symbols-rounded">close</span></button>
         </div>
 
         <div class="settings-section">
@@ -1663,6 +2055,16 @@ input[type="range"]{touch-action:pan-x}
             </div>
         </div>
 
+        <div class="settings-section library-management">
+            <h4>Library Management</h4>
+            <div class="library-source-actions">
+                <button type="button" class="library-danger-btn" id="remove-all-music">
+                    <span class="material-symbols-rounded">delete_sweep</span> Remove All Music
+                </button>
+            </div>
+            <div class="settings-library-list" id="settings-library-list"></div>
+        </div>
+
         <div class="settings-section" style="margin-top: auto;">
             <h4>About Engine</h4>
             <div class="about-card">
@@ -1679,7 +2081,7 @@ input[type="range"]{touch-action:pan-x}
     <div class="mobile-brand">
         <div class="mobile-brand-mark"><span class="material-symbols-rounded">graphic_eq</span></div>
         <div>
-            <strong>Quera</strong>
+            <strong>Quera Music</strong>
             <small>Premium Audio</small>
         </div>
     </div>
@@ -1695,17 +2097,36 @@ input[type="range"]{touch-action:pan-x}
         <span class="material-symbols-rounded">home</span>
         <span>Home</span>
     </button>
-    <button class="mobile-nav-item" type="button"
-            onclick="document.getElementById('btn-add-files').click()">
+    <button class="mobile-nav-item" type="button">
         <span class="mobile-add-orb"><span class="material-symbols-rounded">add</span></span>
         <span>Add Music</span>
     </button>
-    <button class="mobile-nav-item" type="button"
-            onclick="document.getElementById('open-settings-btn').click()">
-        <span class="material-symbols-rounded">tune</span>
-        <span>Settings</span>
+    <button class="mobile-nav-item" id="mobile-library-button" type="button">
+        <span class="material-symbols-rounded">library_music</span>
+        <span>Library</span>
     </button>
 </nav>
+
+<!-- MOBILE ADD MENU: opens only from the + button -->
+<div class="mobile-add-menu" id="mobile-add-menu" aria-hidden="true">
+    <button type="button" id="mobile-add-files">
+        <span class="material-symbols-rounded">music_note</span>
+        <span><strong>Add Music</strong><small>Choose audio files</small></span>
+    </button>
+    <button type="button" id="mobile-add-folder">
+        <span class="material-symbols-rounded">folder_open</span>
+        <span><strong>Upload Folder</strong><small>Add an entire music folder</small></span>
+    </button>
+</div>
+
+<!-- MOBILE LIBRARY DRAWER -->
+<section class="mobile-library" id="mobile-library" aria-hidden="true">
+    <div class="mobile-library-header">
+        <div><span class="eyebrow">YOUR MUSIC</span><h2>Library</h2></div>
+        <button type="button" class="mobile-icon-btn" id="close-mobile-library" aria-label="Close library"><span class="material-symbols-rounded">keyboard_arrow_down</span></button>
+    </div>
+    <div class="mobile-library-list" id="mobile-library-list"></div>
+</section>
 
 <!-- FLOATING CURVY PLAYER BAR WITH VISUALIZER -->
 <footer class="player-bar">
@@ -1890,7 +2311,14 @@ class HeavyEnginePlayer {
 
             settingsPanel: document.getElementById('settings-panel'),
             openSettings: document.getElementById('open-settings-btn'),
-            closeSettings: document.getElementById('close-settings-btn'),
+            settingsLibraryList: document.getElementById('settings-library-list'),
+            removeAllMusic: document.getElementById('remove-all-music'),
+            mobileLibrary: document.getElementById('mobile-library'),
+            mobileLibraryList: document.getElementById('mobile-library-list'),
+            closeMobileLibrary: document.getElementById('close-mobile-library'),
+            mobileAddMenu: document.getElementById('mobile-add-menu'),
+            mobileAddFiles: document.getElementById('mobile-add-files'),
+            mobileAddFolder: document.getElementById('mobile-add-folder'),
 
             // Enhancements Elements
             toggleSpatial: document.getElementById('toggle-spatial'),
@@ -1958,6 +2386,18 @@ class HeavyEnginePlayer {
         this.dom.btnFolder.addEventListener('click', () => this.dom.folderInput.click());
         this.dom.btnEmptyFolder.addEventListener('click', () => this.dom.folderInput.click());
 
+        // Mobile + menu and Library drawer
+        this.dom.mobileAddFiles.addEventListener('click', () => {
+            this.closeMobileAddMenu();
+            this.dom.fileInput.click();
+        });
+        this.dom.mobileAddFolder.addEventListener('click', () => {
+            this.closeMobileAddMenu();
+            this.dom.folderInput.click();
+        });
+        this.dom.closeMobileLibrary.addEventListener('click', () => this.closeMobileLibrary());
+        this.dom.removeAllMusic.addEventListener('click', () => this.removeAllMusic());
+
         this.dom.fileInput.addEventListener('change', (e) => {
             this.handleFiles(e.target.files, 'Files Bundle');
             e.target.value = '';
@@ -1969,6 +2409,16 @@ class HeavyEnginePlayer {
             }
             this.handleFiles(e.target.files, folderName);
             e.target.value = '';
+        });
+
+        const mobilePlus = document.querySelector('.mobile-add-orb')?.closest('.mobile-nav-item');
+        const mobileLibraryButton = document.getElementById('mobile-library-button');
+        if (mobilePlus) mobilePlus.addEventListener('click', (e) => {
+            e.preventDefault(); e.stopPropagation(); this.toggleMobileAddMenu();
+        });
+        if (mobileLibraryButton) mobileLibraryButton.addEventListener('click', () => this.toggleMobileLibrary());
+        document.addEventListener('click', (e) => {
+            if (!this.dom.mobileAddMenu.contains(e.target) && !mobilePlus?.contains(e.target)) this.closeMobileAddMenu();
         });
 
         this.dom.playBtn.addEventListener('click', () => this.togglePlay());
@@ -2010,11 +2460,11 @@ class HeavyEnginePlayer {
             });
         });
 
+        // Settings is intentionally controlled only by the gear button.
         this.dom.openSettings.addEventListener('click', () => {
-            this.dom.settingsPanel.classList.add('open');
-        });
-        this.dom.closeSettings.addEventListener('click', () => {
-            this.dom.settingsPanel.classList.remove('open');
+            const willOpen = !this.dom.settingsPanel.classList.contains('open');
+            this.dom.settingsPanel.classList.toggle('open', willOpen);
+            if (willOpen) this.closeMobileLibrary();
         });
 
         // Enhancements Toggle Listeners
@@ -2250,8 +2700,8 @@ class HeavyEnginePlayer {
 
         let filesToAdd = [];
         audioFiles.forEach(f => {
-            const realPath = f.path || '';
-            const sourceUrl = realPath ? `file://${realPath.replace(/\\/g, '/')}` : URL.createObjectURL(f);
+            const realPath = '';
+            const sourceUrl = URL.createObjectURL(f);
 
             let fileObj = {
                 file: f,
@@ -2313,6 +2763,8 @@ class HeavyEnginePlayer {
                     }
                     if(listTitle) listTitle.textContent = this.files[index].title;
                     if(listArtist) listArtist.textContent = this.files[index].artist;
+                    this.renderMobileLibrary();
+                    this.renderSettingsLibrary();
 
                     if(this.currentIndex === index) this.updateUI(index, true);
 
@@ -2329,36 +2781,177 @@ class HeavyEnginePlayer {
     }
 
     renderFileList() {
+        const emptyHtml = '<div class="library-empty"><span class="material-symbols-rounded">library_music</span><strong>Your library is empty</strong><span>Add music with the + button.</span></div>';
         this.dom.fileList.innerHTML = '';
         if(this.files.length === 0) {
-            this.dom.fileList.innerHTML = '<div style="text-align: center; padding: 30px 20px; color: var(--text-muted); font-size: 12px; margin-top: 10px; background: rgba(255,255,255,0.02); border-radius: var(--radius-md);"><span class="material-symbols-rounded" style="font-size: 28px; margin-bottom: 8px; opacity: 0.3;">library_music</span><br>Library is empty.<br>Add music files to begin.</div>';
+            this.dom.fileList.innerHTML = emptyHtml;
+            this.renderMobileLibrary();
+            this.renderSettingsLibrary();
             return;
         }
 
-        const fragment = document.createDocumentFragment();
-        this.files.forEach((f, idx) => {
+        const makeRow = (f, idx, compact = false) => {
             const div = document.createElement('div');
-            div.className = `track-item ${idx === this.currentIndex ? 'active' : ''}`;
-            div.id = `track-${idx}`;
+            div.className = `track-item ${idx === this.currentIndex ? 'active' : ''}${compact ? ' mobile-track-item' : ''}`;
+            div.id = compact ? `mobile-track-${idx}` : `track-${idx}`;
             div.tabIndex = 0;
             const coverSrc = f.coverObjURL ? f.coverObjURL : '';
             const coverClass = f.coverObjURL ? 'track-img-sm' : 'track-img-sm default-art';
-
             div.innerHTML = `
-                <img src="${coverSrc}" class="${coverClass}" id="list-img-${idx}" loading="lazy" alt="">
+                <img src="${coverSrc}" class="${coverClass}" ${compact ? '' : `id="list-img-${idx}"`} loading="lazy" alt="">
                 <div class="track-details-sm">
-                    <span class="track-title" id="list-title-${idx}">${f.title}</span>
-                    <span class="track-artist" id="list-artist-${idx}">${f.artist}</span>
+                    <span class="track-title" ${compact ? '' : `id="list-title-${idx}"`}>${this.escapeHTML(f.title)}</span>
+                    <span class="track-artist" ${compact ? '' : `id="list-artist-${idx}"`}>${this.escapeHTML(f.artist)}</span>
                 </div>
-                <div class="track-eq"><i></i><i></i><i></i></div>
+                ${compact ? '<span class="material-symbols-rounded mobile-track-play">play_arrow</span>' : '<div class="track-eq"><i></i><i></i><i></i></div>'}
             `;
-            div.addEventListener('click', () => { this.loadMedia(idx); this.play(); });
+            div.addEventListener('click', () => { this.loadMedia(idx); this.play(); this.closeMobileLibrary(); });
             div.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.loadMedia(idx); this.play(); }
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.loadMedia(idx); this.play(); this.closeMobileLibrary(); }
             });
-            fragment.appendChild(div);
-        });
+            return div;
+        };
+
+        const fragment = document.createDocumentFragment();
+        this.files.forEach((f, idx) => fragment.appendChild(makeRow(f, idx, false)));
         this.dom.fileList.appendChild(fragment);
+        this.renderMobileLibrary(makeRow);
+        this.renderSettingsLibrary();
+    }
+
+    renderMobileLibrary(makeRowFn) {
+        if (!this.dom.mobileLibraryList) return;
+        this.dom.mobileLibraryList.innerHTML = '';
+        if (!this.files.length) {
+            this.dom.mobileLibraryList.innerHTML = '<div class="library-empty"><span class="material-symbols-rounded">library_music</span><strong>No music yet</strong><span>Tap + to add songs or a folder.</span></div>';
+            return;
+        }
+        const fragment = document.createDocumentFragment();
+        const make = makeRowFn || ((f, idx) => {
+            const div = document.createElement('div');
+            div.className = `track-item mobile-track-item ${idx === this.currentIndex ? 'active' : ''}`;
+            div.innerHTML = `<img src="${f.coverObjURL || ''}" class="${f.coverObjURL ? 'track-img-sm' : 'track-img-sm default-art'}" alt=""><div class="track-details-sm"><span class="track-title">${this.escapeHTML(f.title)}</span><span class="track-artist">${this.escapeHTML(f.artist)}</span></div><span class="material-symbols-rounded mobile-track-play">play_arrow</span>`;
+            div.addEventListener('click', () => { this.loadMedia(idx); this.play(); this.closeMobileLibrary(); });
+            return div;
+        });
+        this.files.forEach((f, idx) => fragment.appendChild(make(f, idx, true)));
+        this.dom.mobileLibraryList.appendChild(fragment);
+    }
+
+    renderSettingsLibrary() {
+        if (!this.dom.settingsLibraryList) return;
+        this.dom.settingsLibraryList.innerHTML = '';
+        if (!this.files.length) {
+            this.dom.settingsLibraryList.innerHTML = '<div class="settings-library-empty">No uploaded music.</div>';
+            return;
+        }
+        const groups = [...new Set(this.files.map(f => f.sourceGroup || 'Added Music'))];
+        groups.forEach(group => {
+            const count = this.files.filter(f => (f.sourceGroup || 'Added Music') === group).length;
+            const row = document.createElement('div');
+            row.className = 'source-row';
+            row.innerHTML = `<div><strong>${this.escapeHTML(group)}</strong><span>${count} ${count === 1 ? 'song' : 'songs'}</span></div><button type="button" aria-label="Remove ${this.escapeHTML(group)}"><span class="material-symbols-rounded">delete</span></button>`;
+            row.querySelector('button').addEventListener('click', () => this.removeSourceGroup(group));
+            this.dom.settingsLibraryList.appendChild(row);
+        });
+        const songTitle = document.createElement('div');
+        songTitle.className = 'settings-subheading';
+        songTitle.textContent = 'Songs';
+        this.dom.settingsLibraryList.appendChild(songTitle);
+        this.files.forEach((f, idx) => {
+            const row = document.createElement('div');
+            row.className = 'source-song-row';
+            row.innerHTML = `<div><strong>${this.escapeHTML(f.title)}</strong><span>${this.escapeHTML(f.artist)}</span></div><button type="button" aria-label="Remove song"><span class="material-symbols-rounded">close</span></button>`;
+            row.querySelector('button').addEventListener('click', () => this.removeTrack(idx));
+            this.dom.settingsLibraryList.appendChild(row);
+        });
+    }
+
+    escapeHTML(value) {
+        return String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    }
+
+    toggleMobileAddMenu() {
+        const open = !this.dom.mobileAddMenu.classList.contains('open');
+        this.dom.mobileAddMenu.classList.toggle('open', open);
+        this.dom.mobileAddMenu.setAttribute('aria-hidden', String(!open));
+    }
+    closeMobileAddMenu() {
+        if (!this.dom.mobileAddMenu) return;
+        this.dom.mobileAddMenu.classList.remove('open');
+        this.dom.mobileAddMenu.setAttribute('aria-hidden', 'true');
+    }
+    toggleMobileLibrary() {
+        const open = !this.dom.mobileLibrary.classList.contains('open');
+        this.dom.mobileLibrary.classList.toggle('open', open);
+        this.dom.mobileLibrary.setAttribute('aria-hidden', String(!open));
+        this.closeMobileAddMenu();
+        if (open) this.renderMobileLibrary();
+    }
+    closeMobileLibrary() {
+        if (!this.dom.mobileLibrary) return;
+        this.dom.mobileLibrary.classList.remove('open');
+        this.dom.mobileLibrary.setAttribute('aria-hidden', 'true');
+    }
+
+    removeTrack(index) {
+        if (index < 0 || index >= this.files.length) return;
+        const removed = this.files[index];
+        const wasCurrent = index === this.currentIndex;
+        if (wasCurrent) this.pause();
+        if (removed.url && removed.url.startsWith('blob:')) URL.revokeObjectURL(removed.url);
+        if (removed.coverObjURL) URL.revokeObjectURL(removed.coverObjURL);
+        this.parseQueue = this.parseQueue.filter(f => f !== removed);
+        this.files.splice(index, 1);
+        if (!this.files.length) {
+            this.currentIndex = -1;
+            this.audioElement.removeAttribute('src');
+            this.audioElement.load();
+        } else if (wasCurrent) {
+            this.currentIndex = Math.min(index, this.files.length - 1);
+            this.loadMedia(this.currentIndex);
+        } else if (index < this.currentIndex) {
+            this.currentIndex--;
+        }
+        this.dom.trackCount.textContent = this.files.length;
+        this.renderFileList();
+        this.updateEmptyState();
+    }
+
+    removeSourceGroup(group) {
+        const doomed = this.files.filter(f => (f.sourceGroup || 'Added Music') === group);
+        if (!doomed.length) return;
+        const currentWasRemoved = doomed.includes(this.files[this.currentIndex]);
+        if (currentWasRemoved) this.pause();
+        doomed.forEach(f => {
+            if (f.url && f.url.startsWith('blob:')) URL.revokeObjectURL(f.url);
+            if (f.coverObjURL) URL.revokeObjectURL(f.coverObjURL);
+        });
+        this.parseQueue = this.parseQueue.filter(f => !doomed.includes(f));
+        this.files = this.files.filter(f => !doomed.includes(f));
+        this.currentIndex = -1;
+        if (this.files.length) this.loadMedia(0);
+        else { this.audioElement.removeAttribute('src'); this.audioElement.load(); }
+        this.dom.trackCount.textContent = this.files.length;
+        this.renderFileList();
+        this.updateEmptyState();
+    }
+
+    removeAllMusic() {
+        if (!this.files.length) return;
+        this.pause();
+        this.files.forEach(f => {
+            if (f.url && f.url.startsWith('blob:')) URL.revokeObjectURL(f.url);
+            if (f.coverObjURL) URL.revokeObjectURL(f.coverObjURL);
+        });
+        this.files = [];
+        this.parseQueue = [];
+        this.currentIndex = -1;
+        this.audioElement.removeAttribute('src');
+        this.audioElement.load();
+        this.dom.trackCount.textContent = '0';
+        this.renderFileList();
+        this.updateEmptyState();
     }
 
     loadMedia(index) {
