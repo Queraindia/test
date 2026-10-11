@@ -4111,6 +4111,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const firebaseConfig = {
         apiKey: "AIzaSyAqJBOaKX9x49hDOo-GMWGDzHNfoppyzpM",
         authDomain: "queramusicauth.firebaseapp.com",
+        // Required for Realtime Database. Without databaseURL, getDatabase(app)
+        // can fail during module initialization and stop auth + Atmosphere handlers.
+        databaseURL: "https://queramusicauth-default-rtdb.firebaseio.com",
         projectId: "queramusicauth",
         storageBucket: "queramusicauth.firebasestorage.app",
         messagingSenderId: "935698031770",
@@ -4294,8 +4297,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 this._loaded = true;
                 if (changed) this.persist();
             } catch (e) {
-                console.warn('[Quera] atmos load failed', e);
-                this.usedMs = 0; this.lockedUntil = 0; this._loaded = true;
+                console.error('[Quera] Atmosphere quota could not load from Realtime Database:', e);
+                // Keep Atmosphere unavailable until the database is reachable; do not
+                // accidentally grant a fresh trial or persist over an unread quota.
+                this.usedMs = ATMOS_FREE_MS;
+                this.lockedUntil = Date.now() + ATMOS_LOCK_MS;
+                this._loaded = false;
             }
             this.render();
         },
@@ -4438,11 +4445,20 @@ document.addEventListener('DOMContentLoaded', () => {
         p.setAtmosphere = function (enabled) {
             if (enabled) {
                 if (!atmos.canUse()) {
-                    // Quota may still be loading on initial page startup. Reject activation
-                    // quietly until it is loaded; show the limit modal only for a real expiry.
                     original(false);
                     p.syncEnhancementsUI();
                     if (atmos._loaded && (atmos.isLocked() || atmos.remaining() <= 0)) showLimitModal();
+                    else if (currentUser && !atmos._loaded) {
+                        // The quota may still be initializing after sign-in. Load it and
+                        // let the user retry rather than showing a false expired-trial popup.
+                        atmos.load(currentUser.uid).then(() => {
+                            if (atmos.canUse()) {
+                                original(true);
+                                atmos.start();
+                                p.syncEnhancementsUI();
+                            } else if (atmos._loaded) showLimitModal();
+                        }).catch(err => console.error('[Quera] Atmosphere initialization failed:', err));
+                    }
                     return;
                 }
                 original(true);
@@ -4631,6 +4647,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 $('verify-email').textContent = cred.user.email || email;
                 startVerificationWatch(cred.user);
                 showPanel('verify');
+            } else {
+                // Do not rely solely on the asynchronous auth-state listener: make
+                // sure the user's RTDB record and Atmosphere quota are ready first.
+                await ensureUserRecord(cred.user);
+                await atmos.load(cred.user.uid);
+                signupFlowActive = false;
+                hideGate();
+                waitForPlayer();
             }
             await refreshAfterAuth();
             return;
