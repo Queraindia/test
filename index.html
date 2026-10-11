@@ -4161,6 +4161,32 @@ document.addEventListener('DOMContentLoaded', () => {
     ].filter(Boolean);
 
     /* ------------------------------------------------------------------
+       AUTH ACTION LOADER + SAFE RELOAD
+       ------------------------------------------------------------------ */
+    const authLoaderStyle = document.createElement('style');
+    authLoaderStyle.textContent = `
+      #quera-auth-loading{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:rgba(4,4,8,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+      #quera-auth-loading.active{display:flex}
+      #quera-auth-loading .qal-spinner{width:42px;height:42px;border:3px solid rgba(255,255,255,.16);border-top-color:#00e0ff;border-radius:50%;animation:qal-spin .75s linear infinite;box-shadow:0 0 24px rgba(0,224,255,.16)}
+      @keyframes qal-spin{to{transform:rotate(360deg)}}
+    `;
+    document.head.appendChild(authLoaderStyle);
+    const authLoader = document.createElement('div');
+    authLoader.id = 'quera-auth-loading';
+    authLoader.setAttribute('aria-live', 'polite');
+    authLoader.setAttribute('aria-label', 'Please wait');
+    authLoader.innerHTML = '<div class="qal-spinner" role="status"></div>';
+    document.body.appendChild(authLoader);
+    let authReloadPending = false;
+    async function refreshAfterAuth() {
+        if (authReloadPending) return;
+        authReloadPending = true;
+        authLoader.classList.add('active');
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        window.location.reload();
+    }
+
+    /* ------------------------------------------------------------------
        HELPERS
     ------------------------------------------------------------------ */
     function showPanel(name) {
@@ -4412,10 +4438,11 @@ document.addEventListener('DOMContentLoaded', () => {
         p.setAtmosphere = function (enabled) {
             if (enabled) {
                 if (!atmos.canUse()) {
-                    // Reject: revert UI to OFF state
+                    // Quota may still be loading on initial page startup. Reject activation
+                    // quietly until it is loaded; show the limit modal only for a real expiry.
                     original(false);
                     p.syncEnhancementsUI();
-                    showLimitModal();
+                    if (atmos._loaded && (atmos.isLocked() || atmos.remaining() <= 0)) showLimitModal();
                     return;
                 }
                 original(true);
@@ -4605,6 +4632,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 startVerificationWatch(cred.user);
                 showPanel('verify');
             }
+            await refreshAfterAuth();
+            return;
         } catch (err) {
             showError(errEl, friendlyError(err.code));
         } finally {
@@ -4636,6 +4665,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideGate();
                 waitForPlayer();
             }
+            await refreshAfterAuth();
+            return;
         } catch (err) {
             showError(errEl, friendlyError(err.code));
         }
@@ -4695,6 +4726,8 @@ document.addEventListener('DOMContentLoaded', () => {
             $('verify-email').textContent = email;
             startVerificationWatch(cred.user);
             showPanel('verify');
+            await refreshAfterAuth();
+            return;
         } catch (err) {
             signupFlowActive = false;
             showError(errEl, friendlyError(err.code));
@@ -4878,6 +4911,8 @@ document.addEventListener('DOMContentLoaded', () => {
             await atmos.load(user.uid);
             hideGate();
             waitForPlayer();
+            await refreshAfterAuth();
+            return;
         } catch (err) {
             showError(errEl, friendlyError(err.code) || 'Could not set password.');
         } finally {
@@ -4924,6 +4959,8 @@ document.addEventListener('DOMContentLoaded', () => {
             await atmos.load(user.uid);
             hideGate();
             waitForPlayer();
+            await refreshAfterAuth();
+            return;
         } catch (err) {
             showError(errEl, friendlyError(err.code) || 'Could not save your profile.');
         } finally {
