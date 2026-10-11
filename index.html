@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -521,7 +520,7 @@
         .setting-row-main { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
         .setting-text-group { display: flex; flex-direction: column; gap: 4px; flex: 1; }
 
-        .setting-title-line { display: flex; align-items: center; gap: 9px; }
+        .setting-title-line { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
         .setting-title-line span.title { font-size: 13.5px; font-weight: 650; color: var(--text-main); letter-spacing: -0.1px; }
         .setting-subtitle-text { font-size: 11.5px; color: var(--text-muted); font-weight: 500; }
         .setting-helper-text { font-size: 10.5px; color: #ff8080; font-style: normal; font-weight: 500; letter-spacing: 0.1px; opacity: 0.9; }
@@ -532,6 +531,28 @@
             padding: 2.5px 6px; border-radius: 4px;
             letter-spacing: 0.6px; text-transform: uppercase;
             box-shadow: 0 0 14px rgba(180,92,255,0.45);
+        }
+
+        /* ---- Atmosphere free-trial timer badge ---- */
+        .atmos-timer-badge {
+            font-size: 9.5px; font-weight: 800; letter-spacing: 0.5px;
+            padding: 2.5px 8px; border-radius: 999px;
+            background: rgba(0, 224, 255, 0.12);
+            border: 1px solid rgba(0, 224, 255, 0.32);
+            color: #7fe9ff;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .atmos-timer-badge.locked {
+            background: rgba(255, 92, 92, 0.12);
+            border-color: rgba(255, 92, 92, 0.38);
+            color: #ff9d9d;
+        }
+        .atmos-timer-badge.low {
+            background: rgba(255, 200, 0, 0.12);
+            border-color: rgba(255, 200, 0, 0.38);
+            color: #ffd479;
         }
 
         .switch { position: relative; display: inline-block; width: 42px; height: 23px; flex-shrink: 0; }
@@ -611,6 +632,35 @@
             font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
             text-transform: uppercase; color: var(--accent-soft);
         }
+
+        /* ---- Account card (settings) ---- */
+        .account-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .account-avatar {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: linear-gradient(140deg, var(--accent), #7c3aed);
+            display: grid; place-items: center;
+            font-weight: 800; font-size: 15px; color: #041014;
+            flex-shrink: 0;
+        }
+        .account-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+        .account-meta strong { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .account-meta span { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .account-signout {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-soft);
+            padding: 8px 14px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; cursor: pointer;
+            transition: var(--transition-fast);
+            white-space: nowrap;
+        }
+        .account-signout:hover { background: rgba(255,92,92,0.14); border-color: rgba(255,92,92,0.35); color: #ffb3b3; }
 
         /* ==================== FLOATING PLAYER BAR ==================== */
         .player-bar {
@@ -1758,6 +1808,7 @@
 
             .preset-select { min-height: 44px !important; border-radius: 10px !important; }
             .about-card { border-radius: 12px !important; }
+            .account-card { border-radius: 12px !important; background: #141414 !important; }
 
             .library-danger-btn {
                 border-color: rgba(30, 215, 96, 0.22) !important;
@@ -1812,52 +1863,333 @@
             .m-recent-grid { grid-template-columns: 1fr 1fr 1fr; }
         }
 
-/* Authentication and Atmosphere access additions; existing player styling untouched */
-#quera-auth-gate{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(700px 500px at 50% 35%,rgba(0,224,255,.09),transparent 70%),#050509;color:#fff;overflow:auto}
-#quera-auth-gate .qa-card{width:min(460px,100%);padding:30px;border:1px solid rgba(255,255,255,.12);border-radius:22px;background:rgba(18,18,25,.96);box-shadow:0 24px 80px #000;animation:qa-card-in .32s cubic-bezier(.2,.8,.2,1) both}
-@keyframes qa-card-in{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
-.qa-brand{display:flex;align-items:center;gap:11px;margin-bottom:22px}.qa-brand-mark{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#162b35,#11131d);border:1px solid rgba(0,217,255,.28);color:#00d9ff;box-shadow:0 0 22px rgba(0,217,255,.08)}.qa-brand-mark .material-symbols-rounded{font-size:24px}.qa-brand-name{font-size:19px;font-weight:800;letter-spacing:.4px}.qa-brand-caption{font-size:9px;color:#8c8c9e;letter-spacing:1.6px;text-transform:uppercase;margin-top:3px}
-#qa-google{display:flex;align-items:center;justify-content:center;gap:11px;background:#f8f9fa;color:#202124;border-color:#dadce0;transition:transform .18s,box-shadow .18s}#qa-google:hover{background:#fff;box-shadow:0 5px 18px #0005;transform:translateY(-1px)}.qa-google-g{width:18px;height:18px;flex:none}
-#qa-message{padding:0;transition:all .22s ease}#qa-message:not(:empty){padding:10px 12px;border-radius:9px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);color:#d8d8e3}#qa-message.qa-error{color:#ffb4b4;background:rgba(255,80,80,.07);border-color:rgba(255,100,100,.22)}#qa-message.qa-success{color:#8ef0c0;background:rgba(50,220,140,.07);border-color:rgba(50,220,140,.2)}
-#qa-email-fallback{overflow:hidden;max-height:0;opacity:0;transform:translateY(-8px);transition:max-height .35s ease,opacity .28s ease,transform .28s ease}#qa-email-fallback.revealed{max-height:650px;opacity:1;transform:translateY(0)}#qa-fallback-title{font-size:12px;color:#b8b8c7;margin:14px 0 8px;text-align:center}#qa-submit:disabled,#qa-google:disabled{opacity:.65;cursor:wait}
-#quera-auth-gate h2{font-size:25px;margin-bottom:7px}#quera-auth-gate p{color:#a5a5b5;font-size:13px;line-height:1.5;margin-bottom:18px}
-#quera-auth-gate .qa-field{display:block;width:100%;margin:9px 0;padding:12px 13px;border-radius:10px;border:1px solid #343440;background:#0c0c12;color:#fff;font-size:14px;outline:none}
-#quera-auth-gate .qa-field:focus{border-color:#00d9ff}#quera-auth-gate .qa-btn{width:100%;padding:12px;border:1px solid #383844;border-radius:10px;margin-top:10px;background:#171720;color:#fff;font-weight:700;cursor:pointer}
-#quera-auth-gate .qa-primary{background:linear-gradient(100deg,#00cde9,#1688ff);color:#031015;border:0}#quera-auth-gate .qa-switch{background:none;border:0;color:#00d9ff;cursor:pointer;margin-top:16px}
-#qa-message{font-size:12px;min-height:18px;color:#9cefff;margin-top:12px;white-space:pre-wrap}#qa-verify-status{font-size:13px;margin:12px 0;color:#eee}#qa-verify-status .good{color:#55e6a5}#qa-verify-status .bad{color:#ff7777}
-#qa-cooldown{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(3,3,8,.94);color:white;text-align:center}
-#qa-cooldown .qa-card{max-width:440px;padding:32px;border:1px solid rgba(180,92,255,.35);border-radius:24px;background:#111019}#qa-cooldown button{padding:12px 20px;border:0;border-radius:30px;background:linear-gradient(120deg,#a855f7,#00c2ff);font-weight:700;cursor:pointer;margin:8px}
-#qa-atmos-timer{font-size:11px;color:#d8b4fe;text-align:center;margin:8px 0 0;letter-spacing:.4px}
+        /* =========================================================
+           QUERA AUTH GATE  (NEW)
+           ========================================================= */
+        .auth-gate {
+            position: fixed; inset: 0; z-index: 5000;
+            display: none;
+            align-items: flex-start; justify-content: center;
+            padding: 28px 18px;
+            overflow-y: auto;
+            background:
+                radial-gradient(820px 560px at 50% -4%, rgba(0,224,255,0.10), transparent 66%),
+                radial-gradient(700px 520px at 88% 108%, rgba(168,85,247,0.10), transparent 62%),
+                #040406;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        .auth-gate::-webkit-scrollbar { display: none; }
+        .auth-gate.visible { display: flex; }
+
+        .auth-shell {
+            width: min(430px, 100%);
+            margin: auto 0;
+            animation: auth-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes auth-in {
+            from { opacity: 0; transform: translateY(16px) scale(0.99); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .auth-brand {
+            display: flex; align-items: center; gap: 13px;
+            justify-content: center; margin-bottom: 24px;
+        }
+        .auth-brand-icon {
+            width: 46px; height: 46px; border-radius: 14px;
+            display: grid; place-items: center;
+            background: linear-gradient(140deg, rgba(255,255,255,0.13), rgba(0,224,255,0.06));
+            border: 1px solid var(--border-glass);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .auth-brand-icon .material-symbols-rounded { font-size: 23px; color: var(--accent); }
+        .auth-brand h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
+        .auth-brand p {
+            font-size: 8.5px; font-weight: 700; letter-spacing: 1.5px;
+            text-transform: uppercase; color: var(--accent-soft); margin-top: 5px;
+        }
+
+        .auth-panel {
+            background: linear-gradient(168deg, rgba(24,24,32,0.92) 0%, rgba(11,11,16,0.96) 100%);
+            border: 1px solid var(--border-glass);
+            border-radius: 22px;
+            padding: 28px 24px 24px;
+            box-shadow: 0 34px 90px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.06);
+            animation: auth-panel-in 0.35s cubic-bezier(0.2,0.8,0.2,1) both;
+        }
+        @keyframes auth-panel-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .auth-panel h2 { font-size: 25px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 6px; }
+        .auth-sub { font-size: 12.5px; color: var(--text-muted); line-height: 1.55; margin-bottom: 22px; }
+        .auth-sub strong { color: var(--accent); font-weight: 700; word-break: break-all; }
+
+        .auth-oauth {
+            width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 11px;
+            padding: 13px 18px;
+            border-radius: 12px;
+            background: #ffffff;
+            border: 1px solid #ffffff;
+            color: #121212;
+            font-size: 13.5px; font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.18s, box-shadow 0.2s, background 0.2s;
+        }
+        .auth-oauth:hover { background: #f1f3f5; transform: translateY(-1px); box-shadow: 0 10px 28px rgba(255,255,255,0.12); }
+        .auth-oauth:active { transform: translateY(0) scale(0.99); }
+        .auth-oauth svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .auth-divider {
+            display: flex; align-items: center; gap: 12px;
+            margin: 20px 0; color: var(--text-faint);
+            font-size: 10px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase;
+        }
+        .auth-divider::before, .auth-divider::after {
+            content: ''; flex: 1; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
+        }
+
+        .auth-panel label {
+            display: block;
+            font-size: 10.5px; font-weight: 700;
+            letter-spacing: 1.1px; text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+        .auth-panel label .opt {
+            font-size: 9px; font-weight: 600; letter-spacing: 0.6px;
+            text-transform: none; color: var(--text-faint);
+        }
+        .auth-panel input[type="email"],
+        .auth-panel input[type="password"],
+        .auth-panel input[type="text"],
+        .auth-panel input[type="tel"],
+        .auth-panel input[type="date"] {
+            display: block; width: 100%;
+            margin-top: 7px;
+            padding: 12px 14px;
+            border-radius: 11px;
+            background: rgba(255,255,255,0.045);
+            border: 1px solid rgba(255,255,255,0.09);
+            color: var(--text-main);
+            font-size: 13.5px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .auth-panel input::placeholder { color: var(--text-faint); }
+        .auth-panel input:focus {
+            border-color: rgba(0,224,255,0.55);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 0 3px rgba(0,224,255,0.11);
+        }
+        .auth-panel input[type="date"] { color-scheme: dark; }
+
+        .auth-primary {
+            width: 100%;
+            margin-top: 4px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: 0;
+            cursor: pointer;
+            font-size: 13.5px; font-weight: 800; letter-spacing: 0.2px;
+            color: #041014;
+            background: linear-gradient(135deg, #00e0ff, #7ff5ff);
+            box-shadow: 0 12px 32px rgba(0,224,255,0.28);
+            transition: transform 0.18s, box-shadow 0.22s, opacity 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 9px;
+        }
+        .auth-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 16px 42px rgba(0,224,255,0.42); }
+        .auth-primary:active:not(:disabled) { transform: translateY(0) scale(0.99); }
+        .auth-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+        .auth-primary .material-symbols-rounded { font-size: 18px; }
+
+        .auth-ghost {
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px 18px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-soft);
+            font-size: 12.5px; font-weight: 700;
+            cursor: pointer;
+            transition: background 0.18s, border-color 0.18s, color 0.18s;
+        }
+        .auth-ghost:hover { background: rgba(255,255,255,0.1); border-color: var(--border-highlight); color: #fff; }
+
+        .auth-link {
+            display: block;
+            width: 100%;
+            margin-top: 14px;
+            background: none; border: 0;
+            color: var(--text-muted);
+            font-size: 11.5px; font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: color 0.18s;
+        }
+        .auth-link:hover { color: var(--accent); }
+
+        .auth-switch {
+            margin-top: 18px; text-align: center;
+            font-size: 12.5px; color: var(--text-muted);
+        }
+        .auth-switch button {
+            background: none; border: 0; padding: 0;
+            color: var(--accent); font-size: 12.5px; font-weight: 700;
+            cursor: pointer; margin-left: 4px;
+        }
+        .auth-switch button:hover { text-decoration: underline; }
+
+        .auth-error {
+            display: none;
+            margin: 0 0 12px;
+            padding: 10px 13px;
+            border-radius: 10px;
+            font-size: 11.5px; font-weight: 600; line-height: 1.45;
+            background: rgba(255,92,92,0.10);
+            border: 1px solid rgba(255,92,92,0.30);
+            color: #ffabab;
+        }
+        .auth-error.show { display: block; }
+
+        /* ---- Verification status ---- */
+        .verify-status {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 12px; padding: 20px 0 24px;
+        }
+        .verify-ring {
+            width: 88px; height: 88px; border-radius: 50%;
+            display: grid; place-items: center;
+            border: 2px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.03);
+            transition: border-color 0.35s, background 0.35s, box-shadow 0.35s;
+            position: relative;
+        }
+        .verify-ring .material-symbols-rounded { font-size: 38px; color: var(--text-muted); transition: color 0.3s; }
+        .verify-ring.pending { border-color: rgba(0,224,255,0.45); box-shadow: 0 0 30px rgba(0,224,255,0.16); }
+        .verify-ring.pending .material-symbols-rounded { color: var(--accent); animation: verify-spin 2.4s linear infinite; }
+        @keyframes verify-spin { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+        .verify-ring.ok { border-color: #1ed760; background: rgba(30,215,96,0.10); box-shadow: 0 0 34px rgba(30,215,96,0.28); }
+        .verify-ring.ok .material-symbols-rounded { color: #1ed760; animation: verify-pop 0.5s cubic-bezier(0.16,1,0.3,1); }
+        .verify-ring.fail { border-color: #ff5c5c; background: rgba(255,92,92,0.10); box-shadow: 0 0 34px rgba(255,92,92,0.24); }
+        .verify-ring.fail .material-symbols-rounded { color: #ff5c5c; animation: verify-pop 0.5s cubic-bezier(0.16,1,0.3,1); }
+        @keyframes verify-pop { 0% { transform: scale(0.4); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+        .verify-text { font-size: 12.5px; font-weight: 600; color: var(--text-soft); text-align: center; line-height: 1.5; }
+        .verify-timer {
+            font-size: 26px; font-weight: 800; letter-spacing: -0.5px;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+        }
+        .verify-timer.done { color: var(--text-faint); }
+
+        /* =========================================================
+           QUERA ATMOSPHERE LIMIT MODAL  (NEW)
+           ========================================================= */
+        .atmos-limit {
+            position: fixed; inset: 0; z-index: 6000;
+            display: none; align-items: center; justify-content: center;
+            padding: 22px;
+            background: rgba(2,2,6,0.76);
+            backdrop-filter: blur(20px) saturate(140%);
+            -webkit-backdrop-filter: blur(20px) saturate(140%);
+        }
+        .atmos-limit.visible { display: flex; animation: al-fade 0.3s ease both; }
+        @keyframes al-fade { from { opacity: 0; } to { opacity: 1; } }
+
+        .atmos-limit-card {
+            width: min(400px, 100%);
+            text-align: center;
+            padding: 34px 26px 26px;
+            border-radius: 26px;
+            background: linear-gradient(168deg, rgba(40,20,26,0.97) 0%, rgba(12,11,16,0.98) 65%);
+            border: 1px solid rgba(255,92,92,0.26);
+            box-shadow: 0 40px 110px rgba(0,0,0,0.85), 0 0 80px rgba(255,92,92,0.10), inset 0 1px 0 rgba(255,255,255,0.07);
+            animation: al-pop 0.5s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        @keyframes al-pop { from { opacity: 0; transform: scale(0.9) translateY(16px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .al-icon {
+            width: 66px; height: 66px; margin: 0 auto 16px;
+            border-radius: 50%;
+            display: grid; place-items: center;
+            background: radial-gradient(circle at 34% 28%, #ffd0d0, #ff5c5c 46%, #a31616 100%);
+            box-shadow: 0 0 40px rgba(255,92,92,0.45), inset 0 1px 0 rgba(255,255,255,0.4);
+        }
+        .al-icon .material-symbols-rounded { font-size: 32px; color: #fff; }
+
+        .atmos-limit-card h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.7px; margin-bottom: 8px; }
+        .atmos-limit-card p { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
+        .atmos-limit-card .al-note { margin-top: 14px; font-size: 11.5px; }
+
+        .al-timer {
+            margin: 18px auto 4px;
+            display: inline-block;
+            padding: 10px 22px;
+            border-radius: 999px;
+            font-size: 27px; font-weight: 800; letter-spacing: -0.5px;
+            font-variant-numeric: tabular-nums;
+            color: #ffc9c9;
+            background: rgba(255,92,92,0.10);
+            border: 1px solid rgba(255,92,92,0.30);
+            box-shadow: 0 0 28px rgba(255,92,92,0.16);
+        }
+        .al-timer.ready {
+            color: #9df7c0;
+            background: rgba(30,215,96,0.10);
+            border-color: rgba(30,215,96,0.34);
+            box-shadow: 0 0 28px rgba(30,215,96,0.20);
+        }
+
+        .al-download {
+            display: flex; align-items: center; justify-content: center; gap: 9px;
+            width: 100%;
+            margin-top: 22px;
+            padding: 14px 20px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-size: 13.5px; font-weight: 800; letter-spacing: 0.2px;
+            color: #fff;
+            background: linear-gradient(135deg, #a855f7, #6366f1 55%, #00c2ff);
+            box-shadow: 0 14px 36px rgba(124,58,237,0.45), inset 0 1px 0 rgba(255,255,255,0.26);
+            transition: transform 0.2s, box-shadow 0.25s;
+        }
+        .al-download:hover { transform: translateY(-2px); box-shadow: 0 18px 46px rgba(124,58,237,0.6); }
+        .al-download .material-symbols-rounded { font-size: 19px; }
+
+        .al-close {
+            margin-top: 12px;
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-soft);
+            font-size: 12.5px; font-weight: 700;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+        }
+        .al-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+        @media (max-width: 768px) {
+            .auth-gate { padding: 18px 14px; }
+            .auth-panel { padding: 24px 18px 20px; border-radius: 20px; }
+            .auth-panel h2 { font-size: 22px; }
+            .atmos-limit-card { padding: 28px 20px 22px; border-radius: 22px; }
+            .al-timer { font-size: 23px; padding: 9px 18px; }
+            .settings-panel .atmos-timer-badge { font-size: 9px !important; }
+        }
     </style>
 </head>
 <body>
-
-<!-- Firebase sign-in/create-account gate -->
-<div id="quera-auth-gate" style="display:none" aria-modal="true" role="dialog">
-  <div class="qa-card">
-    <div class="qa-brand"><div class="qa-brand-mark"><span class="material-symbols-rounded">graphic_eq</span></div><div><div class="qa-brand-name">Quera</div><div class="qa-brand-caption">Music · Atmosphere</div></div></div>
-    <h2 id="qa-title">Sign in to Quera</h2><p id="qa-subtitle">Sign in or create an account to continue.</p>
-    <div id="qa-fields">
-      <button class="qa-btn" id="qa-google"><svg class="qa-google-g" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.73 7.18l7.65 5.93c4.47-4.13 7.12-10.2 7.12-17.58z"/><path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.87l-7.65-5.93c-2.12 1.42-4.84 2.27-8.25 2.27-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>Continue with Google</span></button>
-      <div style="text-align:center;color:#777;font-size:12px;margin:15px 0">OR CONTINUE WITH EMAIL</div>
-      <div id="qa-email-fallback" class="revealed">
-      <div id="qa-fallback-title">Use your email address instead</div>
-      <div id="qa-profile-fields" style="display:none">
-        <input class="qa-field" id="qa-name" autocomplete="name" placeholder="Full name">
-        <input class="qa-field" id="qa-phone" autocomplete="tel" placeholder="Contact number (optional)" type="tel">
-        <label style="font-size:12px;color:#aaa">Date of birth</label><input class="qa-field" id="qa-dob" type="date">
-      </div>
-      <input class="qa-field" id="qa-email" type="email" autocomplete="email" placeholder="Email address">
-      <input class="qa-field" id="qa-password" type="password" autocomplete="current-password" placeholder="Password (minimum 6 characters)">
-      <button class="qa-btn qa-primary" id="qa-submit">Sign in</button>
-      <button class="qa-switch" id="qa-toggle">New to Quera? Create account</button>
-      </div>
-      <div id="qa-verify-panel" style="display:none"><div id="qa-verify-status">Email verification: <span class="bad">✕ Not verified</span></div><p>Open the verification link sent by Firebase to your email. This page checks verification for up to 180 seconds.</p><button class="qa-btn qa-primary" id="qa-check-verified">I've verified my email</button></div>
-    </div><div id="qa-message" role="status"></div>
-  </div>
-</div>
-<div id="qa-cooldown" role="dialog" aria-modal="true"><div class="qa-card"><h2>Quera Atmosphere trial ended</h2><p>You've used your 3-minute Atmosphere trial. Download Quera Music to continue, or return when your cooldown ends.</p><h3 id="qa-countdown">Available again in 03:00:00</h3><p id="qa-until"></p><button id="qa-download">Download Quera Music</button><button id="qa-return">Return to player</button></div></div>
-
 <!-- DYNAMIC BACKGROUND LAYER -->
 <div id="dynamic-bg" class="dynamic-bg"></div>
 
@@ -1937,6 +2269,7 @@
                 <div class="m-atmos-title">
                     <span>Quera Atmosphere™</span>
                     <span class="pro-badge">PRO</span>
+                    <span class="atmos-timer-badge" id="atmos-timer-mobile">3:00</span>
                 </div>
                 <div class="m-atmos-desc">Immersive Audio Engine</div>
             </div>
@@ -2011,6 +2344,19 @@
             </button>
         </div>
 
+        <!-- ============ ACCOUNT (NEW) ============ -->
+        <div class="settings-section" id="account-section">
+            <h4>Account</h4>
+            <div class="account-card">
+                <div class="account-avatar" id="account-avatar">Q</div>
+                <div class="account-meta">
+                    <strong id="account-name">Quera Listener</strong>
+                    <span id="account-email">—</span>
+                </div>
+                <button class="account-signout" id="account-signout" type="button">Sign out</button>
+            </div>
+        </div>
+
         <div class="settings-section">
             <h4>Audio Enhancements</h4>
 
@@ -2034,6 +2380,7 @@
                         <div class="setting-title-line">
                             <span class="title">Quera Atmosphere™</span>
                             <span class="pro-badge">PRO</span>
+                            <span class="atmos-timer-badge" id="atmos-timer-desktop">3:00</span>
                         </div>
                         <span class="setting-subtitle-text" style="color: #d8b4fe;">Immersive Audio Engine</span>
                     </div>
@@ -2210,13 +2557,174 @@
         <h2 class="atmos-title" id="atmos-title">Quera Atmosphere™</h2>
         <p class="atmos-sub">Immersive Audio Engine</p>
         <p class="atmos-desc">A three-dimensional soundstage that opens up your music — wider stereo imaging, deeper depth and a living, breathing room around every note. Engineered to run even alongside the bit-perfect Lossless path.</p>
-        <div id="qa-atmos-timer">Atmosphere trial: 03:00 remaining</div>
         <div class="atmos-wave">
             <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
         </div>
         <button class="atmos-btn" id="atmos-dismiss">
             <span class="material-symbols-rounded">auto_awesome</span> Experience Atmosphere
         </button>
+    </div>
+</div>
+
+<!-- ==================== AUTH GATE (NEW) ==================== -->
+<div class="auth-gate" id="auth-gate">
+    <div class="auth-shell">
+        <div class="auth-brand">
+            <div class="auth-brand-icon"><span class="material-symbols-rounded">graphic_eq</span></div>
+            <div>
+                <h1>Quera Music</h1>
+                <p>By SDTECHSOLUTIONS</p>
+            </div>
+        </div>
+
+        <!-- ===== SIGN IN ===== -->
+        <section class="auth-panel" id="auth-panel-signin">
+            <h2>Sign in</h2>
+            <p class="auth-sub">Welcome back. Continue to your private library.</p>
+
+            <button class="auth-oauth" id="auth-google-signin" type="button">
+                <svg viewBox="0 0 48 48" aria-hidden="true">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                </svg>
+                Continue with Google
+            </button>
+
+            <div class="auth-divider"><span>or</span></div>
+
+            <form id="auth-signin-form" autocomplete="on">
+                <label>Email
+                    <input type="email" id="signin-email" placeholder="you@example.com" required>
+                </label>
+                <label>Password
+                    <input type="password" id="signin-password" placeholder="••••••••" required>
+                </label>
+                <div class="auth-error" id="signin-error"></div>
+                <button class="auth-primary" type="submit">Sign in</button>
+            </form>
+
+            <p class="auth-switch">Don't have an account?
+                <button type="button" id="go-signup">Create account</button>
+            </p>
+        </section>
+
+        <!-- ===== SIGN UP (email) ===== -->
+        <section class="auth-panel hidden" id="auth-panel-signup">
+            <h2>Create account</h2>
+            <p class="auth-sub">Tell us about you. We'll verify your email before you set a password.</p>
+
+            <button class="auth-oauth" id="auth-google-signup" type="button">
+                <svg viewBox="0 0 48 48" aria-hidden="true">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                </svg>
+                Sign up with Google
+            </button>
+
+            <div class="auth-divider"><span>or use email</span></div>
+
+            <form id="auth-signup-form" autocomplete="on">
+                <label>Full name
+                    <input type="text" id="signup-name" placeholder="Your full name" required>
+                </label>
+                <label>Website / Brand name
+                    <input type="text" id="signup-website" placeholder="e.g. Quera Music" required>
+                </label>
+                <label>Contact number <span class="opt">(optional)</span>
+                    <input type="tel" id="signup-contact" placeholder="+1 555 000 0000">
+                </label>
+                <label>Date of birth
+                    <input type="date" id="signup-dob" required>
+                </label>
+                <label>Email
+                    <input type="email" id="signup-email" placeholder="you@example.com" required>
+                </label>
+                <div class="auth-error" id="signup-error"></div>
+                <button class="auth-primary" type="submit">
+                    <span class="material-symbols-rounded">mark_email_read</span> Send verification link
+                </button>
+            </form>
+
+            <p class="auth-switch">Already have an account?
+                <button type="button" id="go-signin">Sign in</button>
+            </p>
+        </section>
+
+        <!-- ===== VERIFY EMAIL ===== -->
+        <section class="auth-panel hidden" id="auth-panel-verify">
+            <h2>Verify your email</h2>
+            <p class="auth-sub">We sent a verification link to <strong id="verify-email">—</strong>. Open it, then come back here.</p>
+
+            <div class="verify-status">
+                <div class="verify-ring pending" id="verify-ring">
+                    <span class="material-symbols-rounded" id="verify-icon">hourglass_top</span>
+                </div>
+                <div class="verify-text" id="verify-text">Waiting for verification…</div>
+                <div class="verify-timer" id="verify-timer">3:00</div>
+            </div>
+
+            <div class="auth-error" id="verify-error"></div>
+
+            <button class="auth-primary" id="verify-continue" type="button" disabled>Continue</button>
+            <button class="auth-ghost" id="verify-resend" type="button">Resend verification link</button>
+            <button class="auth-link" id="verify-signout" type="button">Use a different account</button>
+        </section>
+
+        <!-- ===== CREATE PASSWORD ===== -->
+        <section class="auth-panel hidden" id="auth-panel-password">
+            <h2>Create a password</h2>
+            <p class="auth-sub">Email verified ✓ — now secure your account with a password.</p>
+
+            <form id="auth-password-form" autocomplete="on">
+                <label>Password
+                    <input type="password" id="signup-password" placeholder="At least 6 characters" required minlength="6">
+                </label>
+                <label>Confirm password
+                    <input type="password" id="signup-password2" placeholder="Repeat password" required minlength="6">
+                </label>
+                <div class="auth-error" id="password-error"></div>
+                <button class="auth-primary" type="submit">Create my account</button>
+            </form>
+        </section>
+
+        <!-- ===== COMPLETE PROFILE (Google) ===== -->
+        <section class="auth-panel hidden" id="auth-panel-profile">
+            <h2>Complete your profile</h2>
+            <p class="auth-sub">Just a few details and you're in.</p>
+
+            <form id="auth-profile-form">
+                <label>Website / Brand name
+                    <input type="text" id="profile-website" placeholder="e.g. Quera Music" required>
+                </label>
+                <label>Contact number <span class="opt">(optional)</span>
+                    <input type="tel" id="profile-contact" placeholder="+1 555 000 0000">
+                </label>
+                <label>Date of birth
+                    <input type="date" id="profile-dob" required>
+                </label>
+                <div class="auth-error" id="profile-error"></div>
+                <button class="auth-primary" type="submit">Finish setup</button>
+            </form>
+        </section>
+    </div>
+</div>
+
+<!-- ==================== ATMOSPHERE LIMIT MODAL (NEW) ==================== -->
+<div class="atmos-limit" id="atmos-limit">
+    <div class="atmos-limit-card">
+        <div class="al-icon"><span class="material-symbols-rounded">hourglass_top</span></div>
+        <h2>Free Atmosphere time ended</h2>
+        <p>You've used your free 3 minutes of Quera Atmosphere™ on this account.</p>
+        <div class="al-timer" id="al-timer">3:00:00</div>
+        <p class="al-note">Come back when the timer runs out, or download Quera Music for unlimited immersive audio.</p>
+        <a class="al-download" id="al-download" href="#" target="_blank" rel="noopener">
+            <span class="material-symbols-rounded">download</span> Download Quera Music
+        </a>
+        <button class="al-close" id="al-close" type="button">Maybe later</button>
     </div>
 </div>
 
@@ -3571,37 +4079,872 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+<!-- =========================================================
+     QUERA AUTH + ATMOSPHERE QUOTA  (Firebase Auth + Realtime DB)
+     ========================================================= -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged, reload, signOut } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
-import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-database.js";
-const firebaseConfig = {
- apiKey:"AIzaSyAqJBOaKX9x49hDOo-GMWGDzHNfoppyzpM", authDomain:"queramusicauth.firebaseapp.com", databaseURL:"https://queramusicauth-default-rtdb.firebaseio.com", projectId:"queramusicauth", storageBucket:"queramusicauth.firebasestorage.app", messagingSenderId:"935698031770", appId:"1:935698031770:web:f93d1f64324a156c39eb23", measurementId:"G-6R42FXWWZ3"
-};
-const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getDatabase(app), google=new GoogleAuthProvider();
-const $=id=>document.getElementById(id); let mode='signin', currentUser=null, verifyPoll=null, atmosphereTick=null, cooldownTick=null, atmosphereStartedAt=null, atmosphereAllowed=false;
-const gate=$('quera-auth-gate'), msg=$('qa-message');
-function say(t,type=''){msg.textContent=t||'';msg.classList.remove('qa-error','qa-success');if(t)msg.classList.add(type==='success'?'qa-success':'qa-error')}
-function setMode(m){mode=m;$('qa-title').textContent=m==='signup'?'Create your Quera account':'Sign in to Quera';$('qa-subtitle').textContent=m==='signup'?'Create an account with Google or email. Email accounts must be verified.':'Sign in or create an account to continue.';$('qa-profile-fields').style.display=m==='signup'?'block':'none';$('qa-password').autocomplete=m==='signup'?'new-password':'current-password';$('qa-submit').textContent=m==='signup'?'Create account':'Sign in';$('qa-toggle').textContent=m==='signup'?'Already have an account? Sign in':'New to Quera? Create account';$('qa-verify-panel').style.display='none';say('')}
-$('qa-toggle').onclick=()=>setMode(mode==='signin'?'signup':'signin');
-async function saveProfile(user,profile={}){const r=ref(db,'users/'+user.uid);const snap=await get(r);await update(r,{email:user.email||'',displayName:profile.fullName||user.displayName||snap.val()?.displayName||'',contactNo:profile.contactNo||snap.val()?.contactNo||'',dob:profile.dob||snap.val()?.dob||'',emailVerified:!!user.emailVerified,lastLoginAt:Date.now(),createdAt:snap.val()?.createdAt||Date.now()})}
-async function startVerification(user){$('qa-verify-panel').style.display='block';$('qa-verify-status').innerHTML='Email verification: <span class="bad">✕ Not verified</span>';try{await sendEmailVerification(user);say('Verification link sent by Firebase. Check your inbox and spam folder.')}catch(e){say(e.message)}let remaining=180;clearInterval(verifyPoll);verifyPoll=setInterval(async()=>{remaining--;try{await reload(user);if(user.emailVerified){clearInterval(verifyPoll);$('qa-verify-status').innerHTML='Email verification: <span class="good">✓ Verified</span>';await saveProfile(user);say('Email verified. Opening Quera…');setTimeout(()=>finishLogin(user),500);return}}catch(e){}if(remaining<=0){clearInterval(verifyPoll);say('180 seconds passed. Click “I’ve verified my email” after opening the link, or sign in again later.')}},1000)}
-$('qa-check-verified').onclick=async()=>{if(!auth.currentUser)return;try{await reload(auth.currentUser);if(auth.currentUser.emailVerified){$('qa-verify-status').innerHTML='Email verification: <span class="good">✓ Verified</span>';await saveProfile(auth.currentUser);finishLogin(auth.currentUser)}else say('Still not verified. Open the link in your email first.')}catch(e){say(e.message)}};
-$('qa-submit').onclick=async()=>{say('');$('qa-submit').disabled=true;const email=$('qa-email').value.trim(),password=$('qa-password').value;if(!email||!password){say('Enter your email and password.');$('qa-submit').disabled=false;return}if(mode==='signup'&&(!$('qa-name').value.trim()||!$('qa-dob').value)){say('Please enter your full name and date of birth.');$('qa-submit').disabled=false;return}try{if(mode==='signup'){const cred=await createUserWithEmailAndPassword(auth,email,password);await saveProfile(cred.user,{fullName:$('qa-name').value.trim(),contactNo:$('qa-phone').value.trim(),dob:$('qa-dob').value});await startVerification(cred.user)}else{const cred=await signInWithEmailAndPassword(auth,email,password);await reload(cred.user);if(!cred.user.emailVerified){currentUser=cred.user;await startVerification(cred.user)}else await finishLogin(cred.user)}}catch(e){say(friendly(e),'error')}finally{$('qa-submit').disabled=false}};
-$('qa-google').onclick=async()=>{say('');$('qa-google').disabled=true;try{const result=await signInWithPopup(auth,google);await saveProfile(result.user);await finishLogin(result.user)}catch(e){if(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request'){$('qa-email-fallback').classList.add('revealed');$('qa-email').focus();say('Google sign-in was closed. No problem — continue securely with email and password below.','error')}else{ $('qa-email-fallback').classList.add('revealed');say(friendly(e),'error')}}finally{$('qa-google').disabled=false}};
-function friendly(e){return ({'auth/invalid-credential':'Sign-in failed. Check your email and password, then try again.','auth/wrong-password':'That password is incorrect. Try again or reset your password.','auth/user-not-found':'No account was found for this email. Create an account to continue.','auth/invalid-email':'Enter a valid email address.','auth/email-already-in-use':'This email already has an account. Switch to Sign in instead.','auth/weak-password':'Choose a password with at least 6 characters.','auth/popup-closed-by-user':'Google sign-in was closed. Continue with email below.','auth/cancelled-popup-request':'The Google sign-in window was closed or another request is active. Try again or use email below.','auth/popup-blocked':'Your browser blocked the Google sign-in popup. Allow popups for this site or use email below.','auth/unauthorized-domain':'This website domain is not authorized. Add it in Firebase Authentication → Settings → Authorized domains.','auth/network-request-failed':'Network connection failed. Check your internet and try again.','auth/too-many-requests':'Too many attempts. Please wait a little and try again.'})[e.code]||'We couldn’t complete sign-in. Please try again.'}
-async function finishLogin(user){if(!user)return;if(!user.emailVerified&&user.providerData.some(p=>p.providerId==='password')){gate.style.display='flex';return}currentUser=user;await saveProfile(user);gate.style.display='none';const snap=await get(ref(db,'users/'+user.uid+'/atmosphere'));const data=snap.val()||{};if(data.cooldownUntil&&Date.now()<data.cooldownUntil){showCooldown(data.cooldownUntil);if(window.playerEngine?.isAtmosphereEnabled)window.playerEngine.setAtmosphere(false);return}if(data.trialStartedAt&&Date.now()<data.trialStartedAt+180000){atmosphereStartedAt=data.trialStartedAt;atmosphereAllowed=true;startAtmosphereTimer()}else if(data.trialStartedAt&&Date.now()>=data.trialStartedAt+180000){await beginCooldown(data.trialStartedAt+180000)} }
-onAuthStateChanged(auth,async user=>{if(!user){currentUser=null;gate.style.display='flex';setMode('signin');return}try{await reload(user);if(user.emailVerified||user.providerData.some(p=>p.providerId!=='password'))await finishLogin(user);else{currentUser=user;gate.style.display='flex';await startVerification(user)}}catch(e){gate.style.display='flex';say(friendly(e))}});
-async function allowAtmosphere(){if(!currentUser||gate.style.display!=='none'){gate.style.display='flex';return false}const snap=await get(ref(db,'users/'+currentUser.uid+'/atmosphere')),d=snap.val()||{},now=Date.now();if(d.cooldownUntil&&now<d.cooldownUntil){showCooldown(d.cooldownUntil);return false}if(d.trialStartedAt&&now<d.trialStartedAt+180000){atmosphereStartedAt=d.trialStartedAt;atmosphereAllowed=true;startAtmosphereTimer();return true}if(d.trialStartedAt&&now>=d.trialStartedAt+180000){await beginCooldown(d.trialStartedAt+180000);return false}atmosphereStartedAt=now;atmosphereAllowed=true;await set(ref(db,'users/'+currentUser.uid+'/atmosphere'),{trialStartedAt:now,cooldownUntil:0,updatedAt:now});startAtmosphereTimer();return true}
-function startAtmosphereTimer(){clearInterval(atmosphereTick);const updateTimer=async()=>{if(!currentUser||!atmosphereStartedAt)return;const left=Math.max(0,180000-(Date.now()-atmosphereStartedAt));$('qa-atmos-timer').textContent='Atmosphere trial: '+format(left)+' remaining';if(left<=0){clearInterval(atmosphereTick);if(window.playerEngine?.isAtmosphereEnabled)window.playerEngine.setAtmosphere(false);await beginCooldown(atmosphereStartedAt+180000)}};updateTimer();atmosphereTick=setInterval(updateTimer,1000)}
-function format(ms){const s=Math.ceil(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
-async function beginCooldown(until){if(!currentUser)return;atmosphereAllowed=false;const now=Date.now(),cooldownUntil=until+3*60*60*1000;await update(ref(db,'users/'+currentUser.uid+'/atmosphere'),{trialStartedAt:0,cooldownUntil,updatedAt:now});if(cooldownUntil>now)showCooldown(cooldownUntil)}
-function showCooldown(until){$('qa-cooldown').style.display='flex';if(window.playerEngine?.isAtmosphereEnabled)window.playerEngine.setAtmosphere(false);clearInterval(cooldownTick);const draw=()=>{const left=until-Date.now();if(left<=0){clearInterval(cooldownTick);$('qa-countdown').textContent='Available now';$('qa-until').textContent='You can use Quera Atmosphere again.';return}$('qa-countdown').textContent='Available again in '+String(Math.floor(left/3600000)).padStart(2,'0')+':'+String(Math.floor(left%3600000/60000)).padStart(2,'0')+':'+String(Math.floor(left%60000/1000)).padStart(2,'0');$('qa-until').textContent='Available at '+new Date(until).toLocaleString()};draw();cooldownTick=setInterval(draw,1000)}
-$('qa-return').onclick=()=>{$('qa-cooldown').style.display='none'};
-$('qa-download').onclick=()=>window.open('https://queramusic.in/','_blank','noopener');
-// Guard both desktop and mobile Atmosphere switches without altering DSP/audio processing.
-window.addEventListener('load',()=>{const original=window.playerEngine?.setAtmosphere;if(!original)return;window.playerEngine.setAtmosphere=async function(enabled){if(enabled){const ok=await allowAtmosphere();if(!ok){this.isAtmosphereEnabled=false;this.syncEnhancementsUI();return}return original.call(this,true)}return original.call(this,false)}});
-</script>
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-analytics.js";
+    import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        GoogleAuthProvider,
+        signInWithPopup,
+        sendEmailVerification,
+        onAuthStateChanged,
+        signOut,
+        updatePassword,
+        updateProfile
+    } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+    import {
+        getDatabase,
+        ref,
+        get,
+        set,
+        update
+    } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-database.js";
 
+    /* ------------------------------------------------------------------
+       FIREBASE CONFIG
+    ------------------------------------------------------------------ */
+    const firebaseConfig = {
+        apiKey: "AIzaSyAqJBOaKX9x49hDOo-GMWGDzHNfoppyzpM",
+        authDomain: "queramusicauth.firebaseapp.com",
+        projectId: "queramusicauth",
+        storageBucket: "queramusicauth.firebasestorage.app",
+        messagingSenderId: "935698031770",
+        appId: "1:935698031770:web:f93d1f64324a156c39eb23",
+        measurementId: "G-6R42FXWWZ3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    try { getAnalytics(app); } catch (e) { /* analytics optional */ }
+
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    /* ------------------------------------------------------------------
+       CONSTANTS
+    ------------------------------------------------------------------ */
+    // 🔗 CHANGE THIS to your real download link
+    const QUERA_DOWNLOAD_URL = "https://queramusic.example/download";
+
+    const ATMOS_FREE_MS = 3 * 60 * 1000;       // 3 minutes free
+    const ATMOS_LOCK_MS = 3 * 60 * 60 * 1000;  // 3 hour cooldown
+    const VERIFY_WINDOW_MS = 180 * 1000;       // 180 seconds
+
+    /* ------------------------------------------------------------------
+       DOM SHORTCUTS
+    ------------------------------------------------------------------ */
+    const $ = (id) => document.getElementById(id);
+
+    const gate           = $('auth-gate');
+    const panels = {
+        signin:   $('auth-panel-signin'),
+        signup:   $('auth-panel-signup'),
+        verify:   $('auth-panel-verify'),
+        password: $('auth-panel-password'),
+        profile:  $('auth-panel-profile')
+    };
+
+    const limitModal  = $('atmos-limit');
+    const limitTimer  = $('al-timer');
+    const limitClose  = $('al-close');
+    const limitDl     = $('al-download');
+
+    if (limitDl) limitDl.href = QUERA_DOWNLOAD_URL;
+
+    const timerBadges = [
+        $('atmos-timer-desktop'),
+        $('atmos-timer-mobile')
+    ].filter(Boolean);
+
+    /* ------------------------------------------------------------------
+       HELPERS
+    ------------------------------------------------------------------ */
+    function showPanel(name) {
+        Object.entries(panels).forEach(([k, el]) => {
+            if (!el) return;
+            el.classList.toggle('hidden', k !== name);
+        });
+        const shell = gate.querySelector('.auth-shell');
+        if (shell && gate.scrollTo) gate.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showError(el, msg) {
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.add('show');
+    }
+    function clearError(el) {
+        if (!el) return;
+        el.textContent = '';
+        el.classList.remove('show');
+    }
+
+    function friendlyError(code) {
+        const map = {
+            'auth/email-already-in-use':   'That email is already registered. Try signing in instead.',
+            'auth/invalid-email':          'That email address looks invalid.',
+            'auth/weak-password':          'Password is too weak — use at least 6 characters.',
+            'auth/user-not-found':         'No account found with that email.',
+            'auth/wrong-password':         'Incorrect password. Please try again.',
+            'auth/invalid-credential':     'Incorrect email or password.',
+            'auth/too-many-requests':      'Too many attempts. Please wait a moment and try again.',
+            'auth/popup-closed-by-user':   'Sign-in popup was closed before finishing.',
+            'auth/popup-blocked':          'Your browser blocked the sign-in popup.',
+            'auth/network-request-failed': 'Network error. Check your connection.',
+            'auth/requires-recent-login':  'Please sign in again to continue.'
+        };
+        return map[code] || 'Something went wrong. Please try again.';
+    }
+
+    function randomTempPassword() {
+        const buf = new Uint8Array(24);
+        (window.crypto || window.msCrypto).getRandomValues(buf);
+        return Array.from(buf, b => b.toString(16).padStart(2, '0')).join('') + 'Aa1!';
+    }
+
+    function formatMS(ms) {
+        const t = Math.max(0, Math.ceil(ms / 1000));
+        const m = Math.floor(t / 60);
+        const s = t % 60;
+        return `${m}:${String(s).padStart(2, '0')}`;
+    }
+    function formatHMS(ms) {
+        const t = Math.max(0, Math.ceil(ms / 1000));
+        const h = Math.floor(t / 3600);
+        const m = Math.floor((t % 3600) / 60);
+        const s = t % 60;
+        return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    /* ------------------------------------------------------------------
+       ATMOSPHERE QUOTA CONTROLLER
+    ------------------------------------------------------------------ */
+    const atmos = {
+        uid: null,
+        usedMs: 0,
+        lockedUntil: 0,
+        running: false,
+        _tickHandle: null,
+        _lastTick: 0,
+        _lastPersist: 0,
+        _loaded: false,
+
+        remaining() {
+            if (this.lockedUntil > Date.now()) return 0;
+            return Math.max(0, ATMOS_FREE_MS - this.usedMs);
+        },
+        isLocked() {
+            return this.lockedUntil > Date.now();
+        },
+        canUse() {
+            return this._loaded && !this.isLocked() && this.remaining() > 0;
+        },
+
+        normalize(raw) {
+            const now = Date.now();
+            let usedMs = Number(raw && raw.usedMs) || 0;
+            let lockedUntil = Number(raw && raw.lockedUntil) || 0;
+            if (lockedUntil && now >= lockedUntil) { usedMs = 0; lockedUntil = 0; }
+            if (usedMs < 0) usedMs = 0;
+            if (usedMs > ATMOS_FREE_MS) usedMs = ATMOS_FREE_MS;
+            return { usedMs, lockedUntil };
+        },
+
+        async load(uid) {
+            this.uid = uid;
+            this._loaded = false;
+            try {
+                const snap = await get(ref(db, `users/${uid}/atmosphere`));
+                const norm = this.normalize(snap.val());
+                const changed = !snap.exists()
+                    || norm.usedMs !== (Number(snap.val()?.usedMs) || 0)
+                    || norm.lockedUntil !== (Number(snap.val()?.lockedUntil) || 0);
+                this.usedMs = norm.usedMs;
+                this.lockedUntil = norm.lockedUntil;
+                this._loaded = true;
+                if (changed) this.persist();
+            } catch (e) {
+                console.warn('[Quera] atmos load failed', e);
+                this.usedMs = 0; this.lockedUntil = 0; this._loaded = true;
+            }
+            this.render();
+        },
+
+        reset() {
+            this.uid = null; this.usedMs = 0; this.lockedUntil = 0;
+            this._loaded = false;
+            this.stop();
+            this.render();
+        },
+
+        async persist() {
+            if (!this.uid) return;
+            try {
+                await set(ref(db, `users/${this.uid}/atmosphere`), {
+                    usedMs: Math.round(this.usedMs),
+                    lockedUntil: this.lockedUntil,
+                    updatedAt: Date.now()
+                });
+            } catch (e) { /* silent */ }
+        },
+
+        start() {
+            if (this.running || !this.canUse()) return;
+            this.running = true;
+            this._lastTick = performance.now();
+            this._tickHandle = setInterval(() => this.tick(), 250);
+            this.render();
+        },
+
+        stop() {
+            if (!this.running) return;
+            this.running = false;
+            if (this._tickHandle) { clearInterval(this._tickHandle); this._tickHandle = null; }
+            this.persist();
+            this.render();
+        },
+
+        tick() {
+            const now = performance.now();
+            const delta = Math.min(now - this._lastTick, 1500); // clamp background-tab jumps
+            this._lastTick = now;
+            this.usedMs += delta;
+
+            if (this.usedMs >= ATMOS_FREE_MS) {
+                this.usedMs = ATMOS_FREE_MS;
+                this.lock();
+                return;
+            }
+            this.render();
+            if (Date.now() - this._lastPersist > 3000) {
+                this._lastPersist = Date.now();
+                this.persist();
+            }
+        },
+
+        lock() {
+            this.running = false;
+            if (this._tickHandle) { clearInterval(this._tickHandle); this._tickHandle = null; }
+            this.usedMs = ATMOS_FREE_MS;
+            this.lockedUntil = Date.now() + ATMOS_LOCK_MS;
+            this.persist();
+            this.render();
+
+            // Turn Atmosphere off in the player (using the ORIGINAL method)
+            const p = window.playerEngine;
+            if (p && p.isAtmosphereEnabled && window.__queraOrigSetAtmosphere) {
+                window.__queraOrigSetAtmosphere(false);
+            }
+            showLimitModal();
+        },
+
+        unlockIfExpired() {
+            if (!this.lockedUntil) return false;
+            if (Date.now() < this.lockedUntil) return false;
+            this.usedMs = 0;
+            this.lockedUntil = 0;
+            this.persist();
+            hideLimitModal();
+            return true;
+        },
+
+        render() {
+            this.unlockIfExpired();
+
+            let text, cls;
+            if (this.isLocked()) {
+                text = formatHMS(this.lockedUntil - Date.now());
+                cls = 'locked';
+            } else {
+                const rem = this.remaining();
+                text = formatMS(rem);
+                cls = rem <= 60000 ? 'low' : '';
+            }
+
+            timerBadges.forEach(b => {
+                b.textContent = text;
+                b.classList.toggle('locked', cls === 'locked');
+                b.classList.toggle('low', cls === 'low');
+            });
+
+            if (limitModal && limitModal.classList.contains('visible')) {
+                const left = this.lockedUntil - Date.now();
+                if (left <= 0) {
+                    limitTimer.textContent = '0:00:00';
+                    limitTimer.classList.add('ready');
+                } else {
+                    limitTimer.textContent = formatHMS(left);
+                    limitTimer.classList.remove('ready');
+                }
+            }
+        }
+    };
+
+    function showLimitModal() {
+        if (!limitModal) return;
+        limitModal.classList.add('visible');
+        atmos.render();
+    }
+    function hideLimitModal() {
+        if (!limitModal) return;
+        limitModal.classList.remove('visible');
+    }
+    if (limitClose) limitClose.addEventListener('click', hideLimitModal);
+
+    // keep the badge / modal countdown ticking even when idle
+    setInterval(() => atmos.render(), 500);
+
+    /* ------------------------------------------------------------------
+       PLAYER PATCH — Atmosphere gating + timer
+       (audio logic itself is untouched)
+    ------------------------------------------------------------------ */
+    function patchPlayerAtmosphere() {
+        const p = window.playerEngine;
+        if (!p || p.__queraAtmosPatched) return;
+
+        const original = p.setAtmosphere.bind(p);
+        window.__queraOrigSetAtmosphere = original;
+
+        p.setAtmosphere = function (enabled) {
+            if (enabled) {
+                if (!atmos.canUse()) {
+                    // Reject: revert UI to OFF state
+                    original(false);
+                    p.syncEnhancementsUI();
+                    showLimitModal();
+                    return;
+                }
+                original(true);
+                atmos.start();
+            } else {
+                original(false);
+                atmos.stop();
+            }
+        };
+
+        p.__queraAtmosPatched = true;
+    }
+
+    function waitForPlayer() {
+        if (window.playerEngine) {
+            patchPlayerAtmosphere();
+            return;
+        }
+        let tries = 0;
+        const t = setInterval(() => {
+            tries++;
+            if (window.playerEngine) { clearInterval(t); patchPlayerAtmosphere(); }
+            else if (tries > 100) clearInterval(t);
+        }, 50);
+    }
+
+    /* ------------------------------------------------------------------
+       AUTH FLOW STATE
+    ------------------------------------------------------------------ */
+    let splashDone = false;
+    let authResolved = false;
+    let currentUser = null;
+    let signupFlowActive = false;
+    let pendingVerifyUser = null;
+
+    let verifyPollHandle = null;
+    let verifyTimerHandle = null;
+    let verifyStartTs = 0;
+
+    setTimeout(() => { splashDone = true; maybeShowGate(); }, 2600);
+
+    function maybeShowGate() {
+        if (!gate) return;
+        if (!splashDone || !authResolved) return;
+        if (signupFlowActive) { gate.classList.add('visible'); return; }
+        if (currentUser) gate.classList.remove('visible');
+        else gate.classList.add('visible');
+    }
+
+    function showGate() {
+        if (!gate) return;
+        gate.classList.add('visible');
+    }
+    function hideGate() {
+        if (!gate) return;
+        gate.classList.remove('visible');
+        showPanel('signin');
+    }
+
+    /* ------------------------------------------------------------------
+       USER RECORD
+    ------------------------------------------------------------------ */
+    async function ensureUserRecord(user, extra) {
+        const userRef = ref(db, `users/${user.uid}`);
+        const snap = await get(userRef);
+        if (!snap.exists()) {
+            await set(userRef, {
+                profile: {
+                    fullName: (extra && extra.fullName) || user.displayName || '',
+                    websiteName: (extra && extra.websiteName) || '',
+                    contactNo: (extra && extra.contactNo) || '',
+                    dob: (extra && extra.dob) || '',
+                    email: user.email || '',
+                    createdAt: Date.now()
+                },
+                atmosphere: { usedMs: 0, lockedUntil: 0, updatedAt: Date.now() }
+            });
+            return { created: true, profile: null };
+        }
+        return { created: false, profile: (snap.val() && snap.val().profile) || null };
+    }
+
+    function renderAccountSection(user) {
+        const nameEl   = $('account-name');
+        const emailEl  = $('account-email');
+        const avatarEl = $('account-avatar');
+        if (!nameEl || !emailEl || !avatarEl) return;
+        const label = user.displayName || (user.email ? user.email.split('@')[0] : 'Quera Listener');
+        nameEl.textContent  = label;
+        emailEl.textContent = user.email || '—';
+        avatarEl.textContent = (label.trim()[0] || 'Q').toUpperCase();
+    }
+
+    const signOutBtn = $('account-signout');
+    if (signOutBtn) {
+        signOutBtn.addEventListener('click', async () => {
+            try { await signOut(auth); } catch (e) { console.warn(e); }
+        });
+    }
+
+    /* ------------------------------------------------------------------
+       AUTH STATE
+    ------------------------------------------------------------------ */
+    onAuthStateChanged(auth, async (user) => {
+        currentUser = user;
+        authResolved = true;
+
+        if (!user) {
+            atmos.reset();
+            hideLimitModal();
+            renderAccountSection({ displayName: '', email: '' });
+            if (!signupFlowActive) {
+                showGate();
+                maybeShowGate();
+            }
+            return;
+        }
+
+        renderAccountSection(user);
+
+        const provider = (user.providerData[0] && user.providerData[0].providerId) || 'password';
+
+        // Unverified password accounts stay in the verification flow
+        if (provider === 'password' && !user.emailVerified) {
+            if (signupFlowActive) {
+                maybeShowGate();
+                return;
+            }
+            // returning after closing the tab mid-verification
+            pendingVerifyUser = user;
+            signupFlowActive = true;
+            showGate();
+            $('verify-email').textContent = user.email || '—';
+            startVerificationWatch(user);
+            showPanel('verify');
+            return;
+        }
+
+        // Fully signed-in
+        if (signupFlowActive) {
+            // flow is finishing on its own — leave the gate alone
+            maybeShowGate();
+            return;
+        }
+
+        try {
+            const res = await ensureUserRecord(user);
+            const needsProfile = !res.profile || !res.profile.websiteName;
+            if (needsProfile && provider !== 'password') {
+                signupFlowActive = true;
+                showGate();
+                showPanel('profile');
+                return;
+            }
+        } catch (e) {
+            console.warn('[Quera] user record check failed', e);
+        }
+
+        await atmos.load(user.uid);
+        hideGate();
+        waitForPlayer();
+    });
+
+    /* ------------------------------------------------------------------
+       PANEL NAVIGATION
+    ------------------------------------------------------------------ */
+    $('go-signup').addEventListener('click', () => { showPanel('signup'); });
+    $('go-signin').addEventListener('click', () => { showPanel('signin'); });
+
+    /* ------------------------------------------------------------------
+       SIGN IN — EMAIL
+    ------------------------------------------------------------------ */
+    $('auth-signin-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errEl = $('signin-error');
+        clearError(errEl);
+        const email = $('signin-email').value.trim();
+        const pass  = $('signin-password').value;
+        const btn   = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.textContent = 'Signing in…';
+        try {
+            const cred = await signInWithEmailAndPassword(auth, email, pass);
+            if (!cred.user.emailVerified) {
+                pendingVerifyUser = cred.user;
+                signupFlowActive = true;
+                $('verify-email').textContent = cred.user.email || email;
+                startVerificationWatch(cred.user);
+                showPanel('verify');
+            }
+        } catch (err) {
+            showError(errEl, friendlyError(err.code));
+        } finally {
+            btn.disabled = false; btn.textContent = 'Sign in';
+        }
+    });
+
+    /* ------------------------------------------------------------------
+       SIGN IN / SIGN UP — GOOGLE
+    ------------------------------------------------------------------ */
+    const googleProvider = new GoogleAuthProvider();
+    googleProvider.setCustomParameters({ prompt: 'select_account' });
+
+    async function googleAuth(errElId) {
+        const errEl = $(errElId);
+        clearError(errEl);
+        try {
+            const cred = await signInWithPopup(auth, googleProvider);
+            const user = cred.user;
+            const res = await ensureUserRecord(user);
+            const needsProfile = !res.profile || !res.profile.websiteName;
+            if (needsProfile) {
+                signupFlowActive = true;
+                showGate();
+                showPanel('profile');
+            } else {
+                signupFlowActive = false;
+                await atmos.load(user.uid);
+                hideGate();
+                waitForPlayer();
+            }
+        } catch (err) {
+            showError(errEl, friendlyError(err.code));
+        }
+    }
+
+    $('auth-google-signin').addEventListener('click', () => googleAuth('signin-error'));
+    $('auth-google-signup').addEventListener('click', () => googleAuth('signup-error'));
+
+    /* ------------------------------------------------------------------
+       SIGN UP — EMAIL (details → verify → password)
+    ------------------------------------------------------------------ */
+    let signupDetails = null;
+
+    $('auth-signup-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errEl = $('signup-error');
+        clearError(errEl);
+
+        const fullName    = $('signup-name').value.trim();
+        const websiteName = $('signup-website').value.trim();
+        const contactNo   = $('signup-contact').value.trim();
+        const dob         = $('signup-dob').value;
+        const email       = $('signup-email').value.trim();
+
+        if (!fullName || !websiteName || !dob || !email) {
+            showError(errEl, 'Please fill in all required fields.');
+            return;
+        }
+
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = 'Sending link…';
+
+        try {
+            signupFlowActive = true;
+            const cred = await createUserWithEmailAndPassword(auth, email, randomTempPassword());
+            pendingVerifyUser = cred.user;
+
+            try { await updateProfile(cred.user, { displayName: fullName }); } catch (_) {}
+
+            // Pre-save the details (no password yet — temp password in use)
+            await set(ref(db, `users/${cred.user.uid}`), {
+                profile: {
+                    fullName, websiteName, contactNo, dob,
+                    email,
+                    createdAt: Date.now(),
+                    passwordSet: false
+                },
+                atmosphere: { usedMs: 0, lockedUntil: 0, updatedAt: Date.now() }
+            });
+
+            signupDetails = { fullName, websiteName, contactNo, dob, email };
+
+            await sendEmailVerification(cred.user);
+
+            $('verify-email').textContent = email;
+            startVerificationWatch(cred.user);
+            showPanel('verify');
+        } catch (err) {
+            signupFlowActive = false;
+            showError(errEl, friendlyError(err.code));
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalHTML;
+        }
+    });
+
+    /* ------------------------------------------------------------------
+       EMAIL VERIFICATION WATCH — 180 second tick/cross
+    ------------------------------------------------------------------ */
+    function setVerifyRing(state) {
+        const ring = $('verify-ring');
+        const icon = $('verify-icon');
+        if (!ring || !icon) return;
+        ring.classList.remove('pending', 'ok', 'fail');
+        if (state === 'pending') { ring.classList.add('pending'); icon.textContent = 'hourglass_top'; }
+        if (state === 'ok')      { ring.classList.add('ok');      icon.textContent = 'check_circle'; }
+        if (state === 'fail')    { ring.classList.add('fail');    icon.textContent = 'cancel'; }
+    }
+
+    function stopVerificationWatch() {
+        if (verifyPollHandle)  { clearInterval(verifyPollHandle);  verifyPollHandle = null; }
+        if (verifyTimerHandle) { clearInterval(verifyTimerHandle); verifyTimerHandle = null; }
+    }
+
+    function startVerificationWatch(user) {
+        stopVerificationWatch();
+        pendingVerifyUser = user;
+        verifyStartTs = Date.now();
+
+        setVerifyRing('pending');
+        $('verify-text').textContent = 'Waiting for verification…';
+        $('verify-timer').textContent = formatMS(VERIFY_WINDOW_MS);
+        $('verify-timer').classList.remove('done');
+        $('verify-continue').disabled = true;
+        clearError($('verify-error'));
+
+        verifyTimerHandle = setInterval(updateVerifyCountdown, 250);
+
+        verifyPollHandle = setInterval(async () => {
+            if (!auth.currentUser) return;
+            try {
+                await auth.currentUser.reload();
+            } catch (_) { /* ignore */ }
+            if (auth.currentUser && auth.currentUser.emailVerified) {
+                finishVerification(true);
+            }
+        }, 3000);
+
+        updateVerifyCountdown();
+    }
+
+    function updateVerifyCountdown() {
+        const elapsed = Date.now() - verifyStartTs;
+        const left = Math.max(0, VERIFY_WINDOW_MS - elapsed);
+        const timerEl = $('verify-timer');
+        if (timerEl) timerEl.textContent = formatMS(left);
+
+        if (left <= 0) {
+            stopVerificationWatch();
+            if (auth.currentUser && auth.currentUser.emailVerified) finishVerification(true);
+            else finishVerification(false);
+        }
+    }
+
+    function finishVerification(ok) {
+        stopVerificationWatch();
+        const timerEl = $('verify-timer');
+
+        if (ok) {
+            setVerifyRing('ok');
+            $('verify-text').textContent = 'Email verified successfully.';
+            if (timerEl) { timerEl.textContent = 'Verified'; timerEl.classList.add('done'); }
+            $('verify-continue').disabled = false;
+            clearError($('verify-error'));
+            setTimeout(() => {
+                if (pendingVerifyUser && pendingVerifyUser.emailVerified) showPanel('password');
+            }, 700);
+        } else {
+            setVerifyRing('fail');
+            $('verify-text').textContent = 'We could not confirm verification within 180 seconds.';
+            if (timerEl) { timerEl.textContent = '0:00'; timerEl.classList.add('done'); }
+            $('verify-continue').disabled = false;
+            $('verify-continue').textContent = 'I have verified — continue';
+            showError($('verify-error'), 'Open the link in your inbox, then tap continue. Check spam if you can\'t find it.');
+        }
+    }
+
+    $('verify-continue').addEventListener('click', async () => {
+        const btn = $('verify-continue');
+        btn.disabled = true;
+        const label = btn.textContent;
+        btn.textContent = 'Checking…';
+        try {
+            if (auth.currentUser) await auth.currentUser.reload();
+        } catch (_) {}
+        if (auth.currentUser && auth.currentUser.emailVerified) {
+            finishVerification(true);
+            showPanel('password');
+        } else {
+            setVerifyRing('fail');
+            $('verify-text').textContent = 'Still not verified yet.';
+            showError($('verify-error'), 'That email isn\'t verified yet. Please open the link we sent.');
+            btn.disabled = false;
+            btn.textContent = label;
+        }
+    });
+
+    $('verify-resend').addEventListener('click', async () => {
+        const errEl = $('verify-error');
+        clearError(errEl);
+        try {
+            if (!auth.currentUser) throw new Error('no-user');
+            await sendEmailVerification(auth.currentUser);
+            $('verify-text').textContent = 'A new link was sent. Check your inbox.';
+            setVerifyRing('pending');
+            verifyStartTs = Date.now();
+            $('verify-timer').classList.remove('done');
+            startVerificationWatch(auth.currentUser);
+        } catch (err) {
+            showError(errEl, friendlyError(err.code));
+        }
+    });
+
+    $('verify-signout').addEventListener('click', async () => {
+        stopVerificationWatch();
+        signupFlowActive = false;
+        pendingVerifyUser = null;
+        try { await signOut(auth); } catch (_) {}
+        showPanel('signin');
+    });
+
+    /* ------------------------------------------------------------------
+       CREATE PASSWORD (final step of email signup)
+    ------------------------------------------------------------------ */
+    $('auth-password-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errEl = $('password-error');
+        clearError(errEl);
+
+        const p1 = $('signup-password').value;
+        const p2 = $('signup-password2').value;
+
+        if (p1.length < 6) { showError(errEl, 'Password must be at least 6 characters.'); return; }
+        if (p1 !== p2)     { showError(errEl, 'Passwords do not match.'); return; }
+
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'Creating account…';
+
+        try {
+            const user = auth.currentUser;
+            if (!user) throw new Error('not-signed-in');
+
+            await updatePassword(user, p1);
+
+            if (signupDetails) {
+                await update(ref(db, `users/${user.uid}/profile`), {
+                    fullName: signupDetails.fullName,
+                    websiteName: signupDetails.websiteName,
+                    contactNo: signupDetails.contactNo,
+                    dob: signupDetails.dob,
+                    email: signupDetails.email,
+                    passwordSet: true,
+                    completedAt: Date.now()
+                });
+            } else {
+                await update(ref(db, `users/${user.uid}/profile`), {
+                    passwordSet: true,
+                    completedAt: Date.now()
+                });
+            }
+
+            signupFlowActive = false;
+            signupDetails = null;
+            pendingVerifyUser = null;
+
+            renderAccountSection(user);
+            await atmos.load(user.uid);
+            hideGate();
+            waitForPlayer();
+        } catch (err) {
+            showError(errEl, friendlyError(err.code) || 'Could not set password.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Create my account';
+        }
+    });
+
+    /* ------------------------------------------------------------------
+       COMPLETE PROFILE (Google sign-up)
+    ------------------------------------------------------------------ */
+    $('auth-profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errEl = $('profile-error');
+        clearError(errEl);
+
+        const websiteName = $('profile-website').value.trim();
+        const contactNo   = $('profile-contact').value.trim();
+        const dob         = $('profile-dob').value;
+
+        if (!websiteName || !dob) {
+            showError(errEl, 'Please fill in all required fields.');
+            return;
+        }
+
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'Saving…';
+
+        try {
+            const user = auth.currentUser;
+            if (!user) throw new Error('not-signed-in');
+
+            await update(ref(db, `users/${user.uid}/profile`), {
+                fullName: user.displayName || '',
+                websiteName,
+                contactNo,
+                dob,
+                email: user.email || '',
+                completedAt: Date.now()
+            });
+
+            signupFlowActive = false;
+            await atmos.load(user.uid);
+            hideGate();
+            waitForPlayer();
+        } catch (err) {
+            showError(errEl, friendlyError(err.code) || 'Could not save your profile.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Finish setup';
+        }
+    });
+
+    /* ------------------------------------------------------------------
+       BOOT
+    ------------------------------------------------------------------ */
+    document.addEventListener('DOMContentLoaded', () => {
+        waitForPlayer();
+        atmos.render();
+    });
+
+    // If the module loads after DOMContentLoaded already fired
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+        waitForPlayer();
+        atmos.render();
+    }
+</script>
 </body>
 </html>
