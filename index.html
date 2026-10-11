@@ -4113,7 +4113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         authDomain: "queramusicauth.firebaseapp.com",
         // Required for Realtime Database. Without databaseURL, getDatabase(app)
         // can fail during module initialization and stop auth + Atmosphere handlers.
-        databaseURL: "https://queramusicauth-default-rtdb.firebaseio.com",
+        databaseURL: "https://queramusicauth-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "queramusicauth",
         storageBucket: "queramusicauth.firebasestorage.app",
         messagingSenderId: "935698031770",
@@ -4126,6 +4126,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const auth = getAuth(app);
     const db = getDatabase(app);
+    console.info('[Quera Firebase] Realtime Database endpoint:', firebaseConfig.databaseURL);
 
     /* ------------------------------------------------------------------
        CONSTANTS
@@ -4284,27 +4285,35 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         async load(uid) {
+            if (!uid) return false;
+            // Do not reuse a previous user's quota while authentication is changing.
+            this.stop();
             this.uid = uid;
             this._loaded = false;
             try {
                 const snap = await get(ref(db, `users/${uid}/atmosphere`));
-                const norm = this.normalize(snap.val());
+                const raw = snap.exists() ? snap.val() : null;
+                const norm = this.normalize(raw);
                 const changed = !snap.exists()
-                    || norm.usedMs !== (Number(snap.val()?.usedMs) || 0)
-                    || norm.lockedUntil !== (Number(snap.val()?.lockedUntil) || 0);
+                    || norm.usedMs !== (Number(raw && raw.usedMs) || 0)
+                    || norm.lockedUntil !== (Number(raw && raw.lockedUntil) || 0);
                 this.usedMs = norm.usedMs;
                 this.lockedUntil = norm.lockedUntil;
+                // Persist a newly-created/normalized quota before allowing Atmosphere.
+                if (changed) await this.persist();
                 this._loaded = true;
-                if (changed) this.persist();
+                this.render();
+                return true;
             } catch (e) {
                 console.error('[Quera] Atmosphere quota could not load from Realtime Database:', e);
-                // Keep Atmosphere unavailable until the database is reachable; do not
-                // accidentally grant a fresh trial or persist over an unread quota.
-                this.usedMs = ATMOS_FREE_MS;
-                this.lockedUntil = Date.now() + ATMOS_LOCK_MS;
+                // A database error is NOT an expired trial. Keep the feature off and
+                // avoid writing a fake lock over data that could not be read.
+                this.usedMs = 0;
+                this.lockedUntil = 0;
                 this._loaded = false;
+                this.render();
+                return false;
             }
-            this.render();
         },
 
         reset() {
@@ -4322,7 +4331,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     lockedUntil: this.lockedUntil,
                     updatedAt: Date.now()
                 });
-            } catch (e) { /* silent */ }
+            } catch (e) {
+                console.error('[Quera Database] Failed to save Atmosphere quota:', e);
+                throw e;
+            }
         },
 
         start() {
@@ -4443,30 +4455,56 @@ document.addEventListener('DOMContentLoaded', () => {
         window.__queraOrigSetAtmosphere = original;
 
         p.setAtmosphere = function (enabled) {
-            if (enabled) {
+            if (!enabled) {
+                original(false);
+                atmos.stop();
+                return;
+            }
+
+            // Use Firebase's current session directly as well as the cached auth state;
+            // this avoids the click racing onAuthStateChanged during startup/refresh.
+            const user = currentUser || auth.currentUser;
+            if (!user) {
+                original(false);
+                p.syncEnhancementsUI();
+                showGate();
+                maybeShowGate();
+                return;
+            }
+
+            if (atmos._loaded && atmos.uid === user.uid) {
                 if (!atmos.canUse()) {
                     original(false);
                     p.syncEnhancementsUI();
-                    if (atmos._loaded && (atmos.isLocked() || atmos.remaining() <= 0)) showLimitModal();
-                    else if (currentUser && !atmos._loaded) {
-                        // The quota may still be initializing after sign-in. Load it and
-                        // let the user retry rather than showing a false expired-trial popup.
-                        atmos.load(currentUser.uid).then(() => {
-                            if (atmos.canUse()) {
-                                original(true);
-                                atmos.start();
-                                p.syncEnhancementsUI();
-                            } else if (atmos._loaded) showLimitModal();
-                        }).catch(err => console.error('[Quera] Atmosphere initialization failed:', err));
-                    }
+                    if (atmos.isLocked() || atmos.remaining() <= 0) showLimitModal();
                     return;
                 }
                 original(true);
                 atmos.start();
-            } else {
-                original(false);
-                atmos.stop();
+                return;
             }
+
+            // Keep the toggle off only while the account quota is being read. Once the
+            // read completes, activate automatically instead of requiring another click.
+            original(false);
+            p.syncEnhancementsUI();
+            atmos.load(user.uid).then(loaded => {
+                if (!loaded) {
+                    console.error('[Quera] Atmosphere remains off because the account quota could not be read/written. Check Realtime Database URL and users/{uid}/atmosphere rules.');
+                    return;
+                }
+                if (atmos.canUse()) {
+                    original(true);
+                    atmos.start();
+                    p.syncEnhancementsUI();
+                } else {
+                    original(false);
+                    p.syncEnhancementsUI();
+                    showLimitModal();
+                }
+            }).catch(err => {
+                console.error('[Quera] Atmosphere initialization failed:', err);
+            });
         };
 
         p.__queraAtmosPatched = true;
@@ -4614,7 +4652,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
         } catch (e) {
-            console.warn('[Quera] user record check failed', e);
+            console.error('[Quera Database] User record read/write failed:', e);
+            showGate();
+            showError($('signin-error'), `Database error: ${e.code || e.message || 'Unable to read/write user record'}. Check Realtime Database URL and rules.`);
+            return;
         }
 
         await atmos.load(user.uid);
@@ -4639,8 +4680,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const pass  = $('signin-password').value;
         const btn   = e.target.querySelector('button[type="submit"]');
         btn.disabled = true; btn.textContent = 'Signing in…';
+        let authApiSucceeded = false;
         try {
             const cred = await signInWithEmailAndPassword(auth, email, pass);
+            authApiSucceeded = true;
             if (!cred.user.emailVerified) {
                 pendingVerifyUser = cred.user;
                 signupFlowActive = true;
@@ -4656,12 +4699,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideGate();
                 waitForPlayer();
             }
-            await refreshAfterAuth();
             return;
         } catch (err) {
-            showError(errEl, friendlyError(err.code));
+            console.error('[Quera Auth] Email sign-in / post-login initialization failed:', err);
+            showError(errEl, friendlyError(err.code) || err.message || 'Sign-in could not finish.');
         } finally {
             btn.disabled = false; btn.textContent = 'Sign in';
+            // If Firebase Auth succeeded, refresh even if a later profile/quota read failed.
+            // The persisted Firebase session lets the auth-state handler resume on reload.
+            if (authApiSucceeded) void refreshAfterAuth();
         }
     });
 
@@ -4674,8 +4720,10 @@ document.addEventListener('DOMContentLoaded', () => {
     async function googleAuth(errElId) {
         const errEl = $(errElId);
         clearError(errEl);
+        let authApiSucceeded = false;
         try {
             const cred = await signInWithPopup(auth, googleProvider);
+            authApiSucceeded = true;
             const user = cred.user;
             const res = await ensureUserRecord(user);
             const needsProfile = !res.profile || !res.profile.websiteName;
@@ -4689,10 +4737,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideGate();
                 waitForPlayer();
             }
-            await refreshAfterAuth();
             return;
         } catch (err) {
-            showError(errEl, friendlyError(err.code));
+            console.error('[Quera Auth] Google sign-in / post-login initialization failed:', err);
+            showError(errEl, friendlyError(err.code) || err.message || 'Google sign-in could not finish.');
+        } finally {
+            // Do not leave a successful Firebase popup session stuck behind the gate
+            // just because the subsequent database/profile initialization failed.
+            if (authApiSucceeded) void refreshAfterAuth();
         }
     }
 
@@ -4750,11 +4802,13 @@ document.addEventListener('DOMContentLoaded', () => {
             $('verify-email').textContent = email;
             startVerificationWatch(cred.user);
             showPanel('verify');
-            await refreshAfterAuth();
+            // Do not reload here: the verification and password-creation flow is active.
+            // Reloading at this point discards its in-memory signup details and can strand the user.
             return;
         } catch (err) {
             signupFlowActive = false;
-            showError(errEl, friendlyError(err.code));
+            console.error('[Quera Auth] Email signup failed:', err);
+            showError(errEl, friendlyError(err.code) || err.message || 'Could not create account.');
         } finally {
             btn.disabled = false;
             btn.innerHTML = originalHTML;
